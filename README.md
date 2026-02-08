@@ -241,7 +241,7 @@ Supported: `en-US`, `pt-BR`, `es-ES`, `fr-FR`, `de-DE`, `it-IT`, `ja-JP`, `ko-KR
 
 - **Documentation**: [https://vox.aillom.com/docs](https://vox.aillom.com/docs)
 - **Issues**: [GitHub Issues](https://github.com/aillom/aillom-vox-client/issues)
-- **Email**: support@aillom.com
+- **Email**: contato@aillom.com.br
 
 ---
 
