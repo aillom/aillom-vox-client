@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Support - AillomVox</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #34495e;
+            border-left: 4px solid #3498db;
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .status-dot.online {
+            background: #2ecc71;
+        }
+
+        /* CRM Content */
+        .customer-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            flex: 1;
+        }
+
+        .crm-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            height: 100%;
+        }
+
+        .customer-info h2 {
+            margin-top: 0;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .info-label {
+            color: #7f8c8d;
+        }
+
+        .notes-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .note {
+            background: white;
+            padding: 10px;
+            border-left: 3px solid #f1c40f;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* AI Phone */
+        .phone-modal {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            width: 320px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .phone-header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .phone-body {
+            padding: 20px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-weight: 300;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn-phone {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .btn-call {
+            background: #2ecc71;
+        }
+
+        .btn-hangup {
+            background: #e74c3c;
+        }
+
+        .btn-phone:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-phone:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .api-setup {
+            padding: 10px;
+            border-top: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        .api-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo"><i class="fas fa-headset"></i> CRM Support</div>
+        <div class="menu">
+            <div class="menu-item active"><i class="fas fa-home"></i> Dashboard</div>
+            <div class="menu-item"><i class="fas fa-users"></i> Customers</div>
+            <div class="menu-item"><i class="fas fa-ticket-alt"></i> Tickets</div>
+            <div class="menu-item"><i class="fas fa-chart-bar"></i> Reports</div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="header">
+            <h3>Case #49281 - Refund Request</h3>
+            <div class="agent-status">
+                <div class="status-dot" id="socketStatus"></div>
+                <span id="socketText">Offline</span>
+            </div>
+        </div>
+
+        <div class="customer-card">
+            <div class="crm-grid">
+                <div class="customer-info">
+                    <h2>Marco A.</h2>
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span>marco@gmail.com</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Plan</span>
+                        <span><b>Enterprise</b></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Total Spend</span>
+                        <span>$12,450.00</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Last Mock Order</span>
+                        <span id="lastOrder">ORD-992-12</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Refund Status</span>
+                        <span id="refundStatus" style="color: #e67e22; font-weight: bold;">PENDING APPROVAL</span>
+                    </div>
+                </div>
+
+                <div class="notes-section" id="notesLog">
+                    <h3>AI Interactions</h3>
+                    <!-- Injected via tools -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="phone-modal">
+        <div class="phone-header">
+            <span>AI Assistant</span>
+            <i class="fas fa-wifi"></i>
+        </div>
+        <div class="phone-body">
+            <div class="timer" id="callTimer">00:00</div>
+            <div class="actions">
+                <button class="btn-phone btn-call" id="callBtn"><i class="fas fa-phone"></i></button>
+                <button class="btn-phone btn-hangup" id="hangupBtn" disabled><i class="fas fa-phone-slash"></i></button>
+            </div>
+        </div>
+        <div class="api-setup">
+            <input type="password" id="apiKey" class="api-input" placeholder="Paste API Key here...">
+        </div>
+    </div>
+
+    <script>
+        // Logic
+        const callBtn = document.getElementById('callBtn');
+        const hangupBtn = document.getElementById('hangupBtn');
+        const apiKeyInput = document.getElementById('apiKey');
+        const timerDisplay = document.getElementById('callTimer');
+        const statusDot = document.getElementById('socketStatus');
+        const statusText = document.getElementById('socketText');
+        const notesLog = document.getElementById('notesLog');
+
+        let socket, audioContext, processor, mediaStream, timerInterval;
+        let startTime;
+
+        callBtn.onclick = async () => {
+            const key = apiKeyInput.value.trim();
+            if (!key) return alert("Please enter API Key");
+
+            callBtn.disabled = true;
+            hangupBtn.disabled = false;
+
+            await connect(key);
+        };
+
+        hangupBtn.onclick = disconnect;
+
+        async function connect(apiKey) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+            const wsUrl = window.location.hostname === 'localhost' ? 'ws://localhost:8080/ws' : 'wss://wss.aillom.com/ws';
+
+            socket = new WebSocket(wsUrl);
+            socket.binaryType = 'arraybuffer';
+
+            socket.onopen = async () => {
+                statusDot.classList.add('online');
+                statusText.textContent = 'Connected';
+                startTimer();
+
+                // Support Tools
+                const tools = [
+                    {
+                        name: "approve_refund",
+                        description: "Approves the pending refund request for the current customer case.",
+                        parameters: { type: "object", properties: {}, required: [] }
+                    },
+                    {
+                        name: "add_note",
+                        description: "Add a note to the customer's case file.",
+                        parameters: {
+                            type: "object",
+                            properties: { text: { type: "string" } },
+                            required: ["text"]
+                        }
+                    }
+                ];
+
+                socket.send(JSON.stringify({
+                    type: 'config',
+                    apikey: apiKey,
+                    provider: 'aillomvox',
+                    voice: 'Heitor',
+                    system_prompt: 'You are a helpful customer support agent processing a refund for Marco. You have tools to approve it and log notes.',
+                    sample_rate: 16000,
+                    tools: tools
+                }));
+
+                await startAudio();
+            };
+
+            socket.onmessage = (e) => {
+                if (typeof e.data === 'string') {
+                    const msg = JSON.parse(e.data);
+                    if (msg.type === 'tool_call') handleTool(msg);
+                    if (msg.type === 'hangup') disconnect();
+                } else {
+                    playAudio(e.data);
+                }
+            };
+
+            socket.onclose = () => disconnect();
+        }
+
+        function disconnect() {
+            if (socket) socket.close();
+            if (audioContext) audioContext.close();
+            if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+
+            stopTimer();
+            callBtn.disabled = false;
+            hangupBtn.disabled = true;
+            statusDot.classList.remove('online');
+            statusText.textContent = 'Offline';
+        }
+
+        function handleTool(msg) {
+            if (msg.name === 'approve_refund') {
+                document.getElementById('refundStatus').textContent = "APPROVED ✅";
+                document.getElementById('refundStatus').style.color = "#2ecc71";
+                addNote("System: Refund Approved by Agent");
+
+                socket.send(JSON.stringify({
+                    type: 'tool_result',
+                    call_id: msg.call_id,
+                    result: "Refund approved successfully."
+                }));
+            }
+            else if (msg.name === 'add_note') {
+                addNote(msg.args.text);
+                socket.send(JSON.stringify({
+                    type: 'tool_result',
+                    call_id: msg.call_id,
+                    result: "Note added to CRM."
+                }));
+            }
+        }
+
+        function addNote(text) {
+            const div = document.createElement('div');
+            div.className = 'note';
+            div.textContent = text;
+            notesLog.appendChild(div);
+        }
+
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                const delta = Math.floor((Date.now() - startTime) / 1000);
+                const m = Math.floor(delta / 60).toString().padStart(2, '0');
+                const s = (delta % 60).toString().padStart(2, '0');
+                timerDisplay.textContent = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerDisplay.textContent = "00:00";
+        }
+
+        // Audio Logic (Same as other examples)
+        async function startAudio() {
+            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true } });
+            const source = audioContext.createMediaStreamSource(mediaStream);
+            processor = audioContext.createScriptProcessor(4096, 1, 1);
+            processor.onaudioprocess = (e) => {
+                if (socket.readyState === WebSocket.OPEN) socket.send(floatTo16BitPCM(e.inputBuffer.getChannelData(0)));
+            };
+            source.connect(processor);
+            processor.connect(audioContext.destination);
+        }
+
+        function playAudio(buf) {
+            const f32 = new Float32Array(buf.byteLength / 2);
+            const view = new DataView(buf);
+            for (let i = 0; i < f32.length; i++) {
+                const s = view.getInt16(i * 2, true);
+                f32[i] = s < 0 ? s / 0x8000 : s / 0x7FFF;
+            }
+            const b = audioContext.createBuffer(1, f32.length, 16000);
+            b.getChannelData(0).set(f32);
+            const s = audioContext.createBufferSource();
+            s.buffer = b;
+            s.connect(audioContext.destination);
+            s.start();
+        }
+
+        function floatTo16BitPCM(input) {
+            const output = new Int16Array(input.length);
+            for (let i = 0; i < input.length; i++) {
+                const s = Math.max(-1, Math.min(1, input[i]));
+                output[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+            }
+            return output.buffer;
+        }
+
+    </script>
+</body>
+
+</html>

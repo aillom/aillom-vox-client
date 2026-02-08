@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AillomVox - Advanced Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Configuration Panel -->
+        <aside class="config-panel">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-wave-square"></i>
+                </div>
+                <div class="logo-text">
+                    <h2>AillomVox</h2>
+                    <span class="version">v2.0 Dashboard</span>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h4 class="section-title">Authentication</h4>
+                <div class="config-group">
+                    <label><i class="fa-solid fa-key"></i> API Key</label>
+                    <input type="password" id="apikey" placeholder="sk-..." autocomplete="off">
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h4 class="section-title">Provider Settings</h4>
+                <div class="config-group">
+                    <label><i class="fa-solid fa-server"></i> Provider</label>
+                    <select id="provider">
+                        <option value="aillomvox" selected>AillomVox (Default)</option>
+                        <option value="openai">OpenAI Realtime</option>
+                        <option value="gemini">Google Gemini</option>
+                        <option value="ultravox">Ultravox</option>
+                        <option value="aws">AWS Nova Sonic</option>
+                        <option value="qwen">Qwen (Aliyun)</option>
+                        <option value="grok">Grok (xAI)</option>
+                    </select>
+                </div>
+
+                <div class="config-group">
+                    <label><i class="fa-solid fa-microphone"></i> Voice</label>
+                    <input type="text" id="voice" value="Heitor">
+                </div>
+                <div class="config-group">
+                    <label><i class="fa-solid fa-globe"></i> Language</label>
+                    <select id="language">
+                        <option value="pt-BR" selected>Português (Brasil)</option>
+                        <option value="en-US">English</option>
+                        <option value="es-ES">Español</option>
+                        <option value="fr-FR">Français</option>
+                        <option value="de-DE">Deutsch</option>
+                        <option value="it-IT">Italiano</option>
+                        <option value="nl-NL">Nederlands</option>
+                        <option value="pl-PL">Polski</option>
+                        <option value="ru-RU">Русский</option>
+                        <option value="zh-CN">中文</option>
+                        <option value="ja-JP">日本語</option>
+                        <option value="ko-KR">한국어</option>
+                        <option value="hi-IN">हिन्दी</option>
+                        <option value="he-IL">עברית</option>
+                        <option value="ar-SA">العربية</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h4 class="section-title">AI Configuration</h4>
+                <div class="config-group">
+                    <label><i class="fa-solid fa-robot"></i> System Prompt</label>
+                    <textarea id="system_prompt" rows="3">You are a helpful assistant.</textarea>
+                </div>
+                <div class="config-group">
+                    <label><i class="fa-solid fa-comment"></i> First Message</label>
+                    <input type="text" id="first_message" value="Olá! Como posso ajudar?">
+                </div>
+            </div>
+
+            <!-- Advanced Toggles -->
+            <details class="advanced-section">
+                <summary><i class="fa-solid fa-sliders"></i> Advanced Settings</summary>
+                <div class="advanced-content">
+                    <div class="config-group">
+                        <label><i class="fa-solid fa-wave-square"></i> Sample Rate</label>
+                        <select id="sample_rate">
+                            <option value="8000">8000 Hz (Telephony)</option>
+                            <option value="16000" selected>16000 Hz (Standard)</option>
+                            <option value="24000">24000 Hz (High Quality)</option>
+                        </select>
+                    </div>
+                    <div class="config-group">
+                        <label><i class="fa-solid fa-wrench"></i> Custom Tools (JSON)</label>
+                        <textarea id="toolsConfig" rows="10">[
+  {
+    "name": "hangup",
+    "description": "Ends the call immediately. Use when user says goodbye.",
+    "config": { "type": "object", "properties": {} }
+  },
+  {
+    "name": "show_alert",
+    "description": "Show a visual alert to the user.",
+    "config": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string", "description": "Message to display" }
+      },
+      "required": ["message"]
+    }
+  },
+  {
+    "name": "change_bg_color",
+    "description": "Changes the dashboard background color.",
+    "config": {
+      "type": "object",
+      "properties": {
+        "color": { "type": "string", "enum": ["red", "blue", "green", "black"], "description": "Target color" }
+      },
+      "required": ["color"]
+    }
+  }
+]</textarea>
+                    </div>
+                </div>
+            </details>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="header-left">
+                    <span id="connectionStatus" class="status-badge disconnected">
+                        <i class="fa-solid fa-circle"></i> DISCONNECTED
+                    </span>
+                    <span id="callTimer" class="call-timer hidden">00:00</span>
+                </div>
+                <div class="header-right">
+                    <button id="connectBtn" class="btn primary">
+                        <i class="fa-solid fa-plug"></i> Connect
+                    </button>
+                    <button id="disconnectBtn" class="btn danger hidden">
+                        <i class="fa-solid fa-power-off"></i> Disconnect
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-grid">
+                <!-- Visualization Panel -->
+                <div class="panel visualization-panel">
+                    <div class="panel-header">
+                        <h3><i class="fa-solid fa-chart-bar"></i> Audio Visualizer</h3>
+                        <span id="micLabel" class="mic-status">
+                            <i class="fa-solid fa-microphone-slash"></i> MIC OFF
+                        </span>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="visualizer"></canvas>
+                    </div>
+                </div>
+
+                <!-- Transcript Panel -->
+                <div class="panel transcript-panel">
+                    <div class="panel-header">
+                        <h3><i class="fa-solid fa-comments"></i> Conversation</h3>
+                        <button id="clearTranscriptBtn" class="btn sm ghost">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="panel-body">
+                        <div id="transcriptContainer" class="transcript-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Panel -->
+            <div class="panel logs-panel">
+                <div class="panel-header">
+                    <h3><i class="fa-solid fa-terminal"></i> Debug Logs</h3>
+                    <button id="clearLogsBtn" class="btn sm ghost">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                <div class="panel-body">
+                    <div id="logsContainer" class="logs-list"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>

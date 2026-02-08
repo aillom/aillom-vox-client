@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Home - AillomVox</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #1a1a1a;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .house-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .room-card {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .room-card.active {
+            border-color: #00ff9d;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+        }
+
+        .room-card.on i {
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+
+        .room-card i {
+            font-size: 3em;
+            color: #555;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .room-card h3 {
+            margin: 10px 0 0;
+        }
+
+        .value-display {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00ff9d;
+            margin-top: 10px;
+        }
+
+        .control-panel {
+            position: fixed;
+            bottom: 30px;
+            background: #333;
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #micBtn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: #ea4335;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #micBtn.listening {
+            background: #00ff9d;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .api-input {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <input type="password" id="apiKey" class="api-input" placeholder="Enter API Key">
+
+    <div class="header">
+        <h1>🏠 Aillom Home</h1>
+        <p>Try saying: "Turn on the living room lights" or "Set temperature to 22 degrees"</p>
+    </div>
+
+    <div class="house-grid">
+        <div class="room-card" id="living-room">
+            <i class="fas fa-lightbulb"></i>
+            <h3>Living Room</h3>
+            <div class="status">OFF</div>
+        </div>
+
+        <div class="room-card" id="kitchen">
+            <i class="fas fa-lightbulb"></i>
+            <h3>Kitchen</h3>
+            <div class="status">OFF</div>
+        </div>
+
+        <div class="room-card" id="thermostat">
+            <i class="fas fa-thermometer-half"></i>
+            <h3>Thermostat</h3>
+            <div class="value-display">20°C</div>
+        </div>
+
+        <div class="room-card" id="security">
+            <i class="fas fa-lock"></i>
+            <h3>Security</h3>
+            <div class="status">ARMED</div>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <div id="statusText">Ready to connect...</div>
+        <button id="micBtn"><i class="fas fa-microphone"></i></button>
+    </div>
+
+    <script>
+        // State
+        const state = {
+            living_room: false,
+            kitchen: false,
+            temperature: 20,
+            security: true
+        };
+
+        // UI Updates
+        function updateUI() {
+            // Living Room
+            const lr = document.getElementById('living-room');
+            lr.classList.toggle('on', state.living_room);
+            lr.querySelector('.status').textContent = state.living_room ? 'ON' : 'OFF';
+
+            // Kitchen
+            const k = document.getElementById('kitchen');
+            k.classList.toggle('on', state.kitchen);
+            k.querySelector('.status').textContent = state.kitchen ? 'ON' : 'OFF';
+
+            // Thermostat
+            document.querySelector('#thermostat .value-display').textContent = `${state.temperature}°C`;
+
+            // Security
+            const sec = document.getElementById('security');
+            sec.querySelector('i').className = state.security ? 'fas fa-lock' : 'fas fa-lock-open';
+            sec.style.borderColor = state.security ? '#00ff9d' : '#ff4444';
+            sec.querySelector('.status').textContent = state.security ? 'ARMED' : 'DISARMED';
+        }
+
+        // AillomVox Connection
+        let socket;
+        let audioContext;
+        let processor;
+        let mediaStream;
+        let isConnected = false;
+
+        const micBtn = document.getElementById('micBtn');
+        const statusText = document.getElementById('statusText');
+        const apiKeyInput = document.getElementById('apiKey');
+
+        micBtn.onclick = async () => {
+            if (isConnected) {
+                disconnect();
+            } else {
+                const key = apiKeyInput.value.trim();
+                if (!key) return alert('Please enter API Key top right');
+                await connect(key);
+            }
+        };
+
+        async function connect(apiKey) {
+            statusText.textContent = 'Connecting...';
+
+            audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+            const wsUrl = window.location.hostname === 'localhost' ? 'ws://localhost:8080/ws' : 'wss://wss.aillom.com/ws';
+
+            socket = new WebSocket(wsUrl);
+            socket.binaryType = 'arraybuffer';
+
+            socket.onopen = async () => {
+                isConnected = true;
+                micBtn.classList.add('listening');
+                statusText.textContent = 'Listening...';
+
+                // Define Smart Home Tools
+                const tools = [
+                    {
+                        name: "set_light",
+                        description: "Turn lights on or off in a specific room.",
+                        parameters: {
+                            type: "object",
+                            properties: {
+                                room: { type: "string", enum: ["living_room", "kitchen"] },
+                                state: { type: "boolean" }
+                            },
+                            required: ["room", "state"]
+                        }
+                    },
+                    {
+                        name: "set_temperature",
+                        description: "Set the thermostat temperature.",
+                        parameters: {
+                            type: "object",
+                            properties: {
+                                degrees: { type: "number" }
+                            },
+                            required: ["degrees"]
+                        }
+                    },
+                    {
+                        name: "set_security",
+                        description: "Arm or disarm the security system.",
+                        parameters: {
+                            type: "object",
+                            properties: {
+                                arm: { type: "boolean" }
+                            },
+                            required: ["arm"]
+                        }
+                    }
+                ];
+
+                socket.send(JSON.stringify({
+                    type: 'config',
+                    apikey: apiKey,
+                    provider: 'aillomvox',
+                    voice: 'Heitor',
+                    system_prompt: 'You are a smart home assistant. Control the house devices based on user requests.',
+                    sample_rate: 16000,
+                    tools: tools
+                }));
+
+                await startAudio();
+            };
+
+            socket.onmessage = (event) => {
+                if (typeof event.data === 'string') {
+                    const msg = JSON.parse(event.data);
+                    if (msg.type === 'tool_call') handleTool(msg);
+                    if (msg.type === 'hangup') disconnect();
+                } else {
+                    playAudio(event.data);
+                }
+            };
+
+            socket.onclose = () => disconnect();
+        }
+
+        function disconnect() {
+            isConnected = false;
+            micBtn.classList.remove('listening');
+            statusText.textContent = 'Ready to connect...';
+            if (socket) socket.close();
+            if (audioContext) audioContext.close();
+            if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+        }
+
+        function handleTool(msg) {
+            console.log('Tool:', msg.name, msg.args);
+
+            if (msg.name === 'set_light') {
+                state[msg.args.room] = msg.args.state;
+                updateUI();
+                respondTool(msg.call_id, `Light in ${msg.args.room} turned ${msg.args.state ? 'ON' : 'OFF'}`);
+            }
+            else if (msg.name === 'set_temperature') {
+                state.temperature = msg.args.degrees;
+                updateUI();
+                respondTool(msg.call_id, `Temperature set to ${msg.args.degrees}`);
+            }
+            else if (msg.name === 'set_security') {
+                state.security = msg.args.arm;
+                updateUI();
+                respondTool(msg.call_id, `Security system ${msg.args.arm ? 'ARMED' : 'DISARMED'}`);
+            }
+        }
+
+        function respondTool(callId, result) {
+            socket.send(JSON.stringify({
+                type: 'tool_result',
+                call_id: callId,
+                result: result
+            }));
+        }
+
+        async function startAudio() {
+            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true } });
+            const source = audioContext.createMediaStreamSource(mediaStream);
+            processor = audioContext.createScriptProcessor(4096, 1, 1);
+            processor.onaudioprocess = (e) => {
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(floatTo16BitPCM(e.inputBuffer.getChannelData(0)));
+                }
+            };
+            source.connect(processor);
+            processor.connect(audioContext.destination);
+        }
+
+        function playAudio(buffer) {
+            const float32 = new Float32Array(buffer.byteLength / 2);
+            const view = new DataView(buffer);
+            for (let i = 0; i < float32.length; i++) {
+                const s = view.getInt16(i * 2, true);
+                float32[i] = s < 0 ? s / 0x8000 : s / 0x7FFF;
+            }
+            const audioBuf = audioContext.createBuffer(1, float32.length, 16000);
+            audioBuf.getChannelData(0).set(float32);
+            const source = audioContext.createBufferSource();
+            source.buffer = audioBuf;
+            source.connect(audioContext.destination);
+            source.start();
+        }
+
+        function floatTo16BitPCM(input) {
+            const output = new Int16Array(input.length);
+            for (let i = 0; i < input.length; i++) {
+                const s = Math.max(-1, Math.min(1, input[i]));
+                output[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+            }
+            return output.buffer;
+        }
+
+        // Init UI
+        updateUI();
+
+    </script>
+</body>
+
+</html>
