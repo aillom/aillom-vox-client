@@ -76,7 +76,7 @@ This repository contains multiple examples ranging from a minimal connection scr
 ### Minimal Code
 
 ```javascript
-const ws = new WebSocket("wss://wss.aillom.com/ws");
+const ws = new WebSocket("wss://vox.aillom.com/ws");
 
 ws.onopen = () => {
   ws.send(JSON.stringify({

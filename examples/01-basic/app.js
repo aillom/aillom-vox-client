@@ -23,10 +23,10 @@ connectBtn.onclick = async () => {
     // 2. Connect to WebSocket
     // Note: Replace 'your-server-url' with actual server if hosted elsewhere
     // For local dev with aillom-vox, use localhost:8080
-    // For production, use wss://wss.aillom.com/ws
+    // For production, use wss://vox.aillom.com/ws
     const wsUrl = window.location.hostname === 'localhost'
         ? 'ws://localhost:8080/ws'
-        : 'wss://wss.aillom.com/ws';
+        : 'wss://vox.aillom.com/ws';
 
     socket = new WebSocket(wsUrl);
     socket.binaryType = 'arraybuffer';

@@ -4,7 +4,7 @@ The AillomVox Gateway uses a WebSocket protocol for full-duplex audio streaming 
 
 ## Connection
 
-**Endpoint**: `wss://wss.aillom.com/ws`
+**Endpoint**: `wss://vox.aillom.com/ws`
 
 > **Note**: Authentication is performed in-band (inside the first message), not via HTTP headers or query params.
 

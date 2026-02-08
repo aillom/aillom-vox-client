@@ -20,7 +20,7 @@ Common issues and how to resolve them when using AillomVox.
 
 ### `Connection Refused` / `Socket Hang Up`
 - **Cause**: Server unreachable or firewall blocking outbound port 443 (WSS).
-- **Fix**: Ensure you can reach `https://wss.aillom.com/health`. Check your network settings.
+- **Fix**: Ensure you can reach `https://vox.aillom.com/health`. Check your network settings.
 
 ### `1008 Policy Violation`
 - **Cause**: Sent binary data before the config handshake.

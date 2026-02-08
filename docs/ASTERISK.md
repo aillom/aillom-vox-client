@@ -87,7 +87,7 @@ AILLOM_API_KEY=your-api-key-here
 
 ; Call extension 6000 to talk to AI
 exten => 6000,1,NoOp(AillomVox Direct Mode)
- same => n,Set(WS_URL=ws://wss.aillom.com/ws?apiKey=${AILLOM_API_KEY})
+ same => n,Set(WS_URL=ws://vox.aillom.com/ws?apiKey=${AILLOM_API_KEY})
  same => n,Set(CONFIG={"provider":"aillomvox","voice":"Heitor","language":"pt-BR","system_prompt":"Você é um assistente. Seja conciso.","first_message":"Olá! Como posso ajudar?","sample_rate":8000})
  same => n,Answer()
  same => n,AudioSocket(${WS_URL},${CONFIG})
@@ -155,7 +155,7 @@ const server = net.createServer((socket) => {
     // Connect to AillomVox
     const client = new AillomVoxClient({
         apiKey: process.env.AILLOM_API_KEY,
-        url: 'wss://wss.aillom.com/ws'
+        url: 'wss://vox.aillom.com/ws'
     });
 
     // Register client tools
@@ -300,7 +300,7 @@ Isso garante que Asterisk sempre entrega PCM 16-bit para o AudioSocket.
 
 ```ini
 exten => 7001,1,Set(CONFIG={"provider":"aillomvox","voice":"Heitor","sample_rate":8000})
- same => n,AudioSocket(ws://wss.aillom.com/ws?apiKey=${AILLOM_API_KEY},${CONFIG})
+ same => n,AudioSocket(ws://vox.aillom.com/ws?apiKey=${AILLOM_API_KEY},${CONFIG})
 ```
 
 **Why?** Lowest latency, optimized for 8kHz, $0.03/min.
@@ -309,7 +309,7 @@ exten => 7001,1,Set(CONFIG={"provider":"aillomvox","voice":"Heitor","sample_rate
 
 ```ini
 exten => 7002,1,Set(CONFIG={"provider":"gemini","voice":"Puck","sample_rate":8000})
- same => n,AudioSocket(ws://wss.aillom.com/ws?apiKey=${AILLOM_API_KEY},${CONFIG})
+ same => n,AudioSocket(ws://vox.aillom.com/ws?apiKey=${AILLOM_API_KEY},${CONFIG})
 ```
 
 **Why?** Multimodal, fast, $0.06/min.
@@ -318,7 +318,7 @@ exten => 7002,1,Set(CONFIG={"provider":"gemini","voice":"Puck","sample_rate":800
 
 ```ini
 exten => 7003,1,Set(CONFIG={"provider":"openai","voice":"shimmer","sample_rate":8000})
- same => n,AudioSocket(ws://wss.aillom.com/ws?apiKey=${AILLOM_API_KEY},${CONFIG})
+ same => n,AudioSocket(ws://vox.aillom.com/ws?apiKey=${AILLOM_API_KEY},${CONFIG})
 ```
 
 **Why?** Best for complex reasoning, $0.10/min.
@@ -341,7 +341,7 @@ echo "load = res_audiosocket.so" >> /etc/asterisk/modules.conf
 
 ```bash
 # Test direct connection
-curl -I https://wss.aillom.com/health
+curl -I https://vox.aillom.com/health
 
 # Test middleware
 netstat -tuln | grep 9000

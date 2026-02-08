@@ -174,7 +174,7 @@ connectBtn.onclick = async () => {
         // Universal WebSocket URL
         const wsUrl = window.location.hostname === 'localhost'
             ? 'ws://localhost:8080/ws'
-            : 'wss://wss.aillom.com/ws';
+            : 'wss://vox.aillom.com/ws';
 
         socket = new WebSocket(wsUrl);
         socket.binaryType = 'arraybuffer';

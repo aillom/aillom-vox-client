@@ -322,7 +322,7 @@
 
         async function connect(apiKey) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
-            const wsUrl = window.location.hostname === 'localhost' ? 'ws://localhost:8080/ws' : 'wss://wss.aillom.com/ws';
+            const wsUrl = window.location.hostname === 'localhost' ? 'ws://localhost:8080/ws' : 'wss://vox.aillom.com/ws';
 
             socket = new WebSocket(wsUrl);
             socket.binaryType = 'arraybuffer';
