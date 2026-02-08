@@ -1,0 +1,37 @@
+{
+    "name": "aillom-vox-client",
+    "version": "1.0.0",
+    "description": "Enterprise-Grade Voice AI SDK for Speech-to-Speech, Audio-to-Audio, and Realtime Multimodal applications.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aillom/aillom-vox-client.git"
+    },
+    "keywords": [
+        "voice-ai",
+        "speech-to-speech",
+        "audio-to-audio",
+        "realtime-api",
+        "websocket-client",
+        "openai-realtime",
+        "gemini-multimodal",
+        "low-latency",
+        "voice-gateway",
+        "sip-trunking",
+        "asterisk",
+        "inworld-ai",
+        "gpt-4o-realtime",
+        "telephony",
+        "ultravox",
+        "nova-sonic"
+    ],
+    "author": "Aillom Technologies <contato@aillom.com.br>",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/aillom/aillom-vox-client/issues"
+    },
+    "homepage": "https://vox.aillom.com"
+}

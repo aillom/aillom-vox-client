@@ -6,7 +6,8 @@
 
 **The Enterprise-Grade Voice AI SDK.** 
 
-Integrate ultra-low latency, real-time voice intelligence into your apps with a single, unified protocol. Connect effortlessly to **OpenAI Realtime**, **Gemini Multimodal**, **AWS Nova**, **Qwen**, **Grok**, **UltraVox**, and **AillomVox** native models.
+Build **Speech-to-Speech**, **Audio-to-Audio**, and **Realtime Multimodal** applications with a single, unified protocol. 
+Connect effortlessly to **OpenAI Realtime**, **Gemini Multimodal**, **AWS Nova**, **Qwen**, **Grok**, **UltraVox**, and **AillomVox** native models.
 
 ---
 
