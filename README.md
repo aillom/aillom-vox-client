@@ -239,7 +239,7 @@ Supported: `en-US`, `pt-BR`, `es-ES`, `fr-FR`, `de-DE`, `it-IT`, `ja-JP`, `ko-KR
 
 ## 🤝 Support
 
-- **Documentation**: [https://aillom-vox-flow.fly.dev/docs](https://aillom-vox-flow.fly.dev/docs)
+- **Documentation**: [https://vox.aillom.com/docs](https://vox.aillom.com/docs)
 - **Issues**: [GitHub Issues](https://github.com/aillom/aillom-vox-client/issues)
 - **Email**: support@aillom.com
 

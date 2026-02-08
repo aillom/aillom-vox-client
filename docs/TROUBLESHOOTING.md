@@ -12,7 +12,7 @@ Common issues and how to resolve them when using AillomVox.
 
 ### `error: insufficient_balance`
 - **Cause**: Your account balance is $0.00 or below.
-- **Fix**: Add credits via the [Billing page](https://aillom-vox-flow.fly.dev/billing).
+- **Fix**: Add credits via the [Billing page](https://vox.aillom.com/billing).
 
 ---
 
