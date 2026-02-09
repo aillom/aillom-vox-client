@@ -10,7 +10,7 @@ class AillomVox {
         this.ws = null;
         this.eventListeners = new Map();
         this.isConnected = false;
-        this.url = 'wss://aillom-vox.fly.dev/ws';
+        this.url = 'wss://wss.aillom.com/ws';
         this.config = config;
         if (this.config.gatewayUrl) {
             this.url = this.config.gatewayUrl;

@@ -6,7 +6,7 @@ export class AillomVox {
     private config: AillomVoxConfig;
     private eventListeners: Map<string, EventHandler[]> = new Map();
     private isConnected: boolean = false;
-    private url: string = 'wss://aillom-vox.fly.dev/ws';
+    private url: string = 'wss://wss.aillom.com/ws';
 
     constructor(config: AillomVoxConfig) {
         this.config = config;
