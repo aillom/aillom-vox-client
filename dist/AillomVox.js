@@ -10,8 +10,11 @@ class AillomVox {
         this.ws = null;
         this.eventListeners = new Map();
         this.isConnected = false;
-        this.url = 'wss://vox.aillom.com/ws';
+        this.url = 'wss://aillom-vox.fly.dev/ws';
         this.config = config;
+        if (this.config.gatewayUrl) {
+            this.url = this.config.gatewayUrl;
+        }
         if (!this.config.apiKey) {
             throw new Error('AillomVox: apiKey is required');
         }

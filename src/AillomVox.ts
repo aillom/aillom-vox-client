@@ -6,10 +6,13 @@ export class AillomVox {
     private config: AillomVoxConfig;
     private eventListeners: Map<string, EventHandler[]> = new Map();
     private isConnected: boolean = false;
-    private url: string = 'wss://vox.aillom.com/ws';
+    private url: string = 'wss://aillom-vox.fly.dev/ws';
 
     constructor(config: AillomVoxConfig) {
         this.config = config;
+        if (this.config.gatewayUrl) {
+            this.url = this.config.gatewayUrl;
+        }
         if (!this.config.apiKey) {
             throw new Error('AillomVox: apiKey is required');
         }

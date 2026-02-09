@@ -29,6 +29,7 @@ export interface AillomVoxConfig {
     tools?: ClientTool[];
     webhookUrl?: string;
     maxDuration?: number;
+    gatewayUrl?: string;
 }
 
 export interface TranscriptEvent {
