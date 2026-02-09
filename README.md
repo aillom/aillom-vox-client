@@ -11,9 +11,17 @@ Connect effortlessly to **OpenAI Realtime**, **Gemini Multimodal**, **AWS Nova**
 
 ---
 
+## 📦 Installation
+
+```bash
+npm install aillom-vox-client
+```
+
 ## 📚 Documentation
-- [**Quick Start**](#-quick-start) - Get started in 5 minutes
+- [**Quick Start (SDK)**](#-quick-start-sdk) - The modern way
+- [**Quick Start (WebSocket)**](#-quick-start-websocket) - The low-level way
 - [**Examples**](#-examples) - Ready-to-use client implementations
+- [**N8N Integration**](#-n8n-node) - Official AillomVox node for n8n
 - [**Client Tools**](#-client-tools) - Add custom UI controls to your AI
 - [**Voice Catalog**](docs/VOICES.md) - All voices across all providers
 - [**Asterisk Integration**](docs/ASTERISK.md) - Complete guide for Asterisk 23/SIP
@@ -67,14 +75,35 @@ This repository contains multiple examples ranging from a minimal connection scr
 
 ---
 
-## ⚡ Quick Start (Basic)
+## ⚡ Quick Start (SDK)
 
-1. Open `examples/01-basic/index.html` in your browser.
-2. Enter your API Key.
-3. Click **Connect**.
-4. Speak!
+The easiest way to connect to AillomVox.
 
-### Minimal Code
+```typescript
+import { AillomVox } from 'aillom-vox-client';
+
+const client = new AillomVox({
+  apiKey: 'av_YOUR_KEY',
+  voice: 'Edward',
+  debug: true
+});
+
+client.on('transcript', (msg) => {
+  console.log(`[${msg.role}] ${msg.text}`);
+});
+
+client.on('audio', (chunk) => {
+  // Play chunk (ArrayBuffer)
+});
+
+await client.connect();
+```
+
+---
+
+## 🔌 Quick Start (WebSocket)
+
+If you prefer raw WebSockets (e.g. for Python, Go, or minimal JS):
 
 ```javascript
 const ws = new WebSocket("wss://vox.aillom.com/ws");
@@ -84,21 +113,13 @@ ws.onopen = () => {
     type: "config",
     apikey: "YOUR_API_KEY",
     provider: "aillomvox",
-    voice: "Edward",
-    language: "en-US",
-    sample_rate: 16000,
-    system_prompt: "You are a helpful assistant. Be concise."
+    voice: "Edward"
   }));
 };
 
 ws.onmessage = (event) => {
   if (event.data instanceof ArrayBuffer) {
-    playAudio(event.data);  // Binary = PCM audio
-  } else {
-    const msg = JSON.parse(event.data);
-    if (msg.type === "transcript" && msg.final) {
-      console.log(`[${msg.role}] ${msg.text}`);
-    }
+    playAudio(event.data);
   }
 };
 ```
