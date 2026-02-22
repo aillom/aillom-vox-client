@@ -50,6 +50,7 @@ Choose the tier that fits your budget. **AillomVox** is optimized for telephony 
 | Provider | Cost/Min | Tier | Recommended For |
 | :--- | :--- | :--- | :--- |
 | **AillomVox** | **$0.03** | 🚀 **Best Value** | High volume, Telephony, Support |
+| **AillomVox Max** | **$0.06** | ⭐ **Premium** | Highest Quality, Enterprise |
 | **Gemini** | $0.06 | Standard | Google Gemini 2.5 Flash. Multimodal |
 | **AWS** | $0.06 | Standard | AWS Nova Sonic 2. Enterprise |
 | **Qwen** | $0.06 | Standard | Alibaba Qwen Omni 3. Cost-effective |
