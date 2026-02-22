@@ -7,6 +7,7 @@ AillomVox aggregates top-tier Voice AI providers. Click on a provider to see det
 | Provider | Model | Voices | Best For | Documentation |
 | :--- | :--- | :--- | :--- | :--- |
 | **AillomVox** | *Groq + Inworld TTS* | 65 voices | **Speed & Telephony**. Lowest latency, 8kHz native. | [Docs](providers/AILLOMVOX.md) |
+| **AillomVox Max** | *Groq + Cartesia Sonic 3* | Unlimited | **Hyper-realism**. Emotive fast speech, Voice Cloning. | [Docs](providers/AILLOMVOX.md) |
 | **OpenAI** | `gpt-realtime-mini` | 6 voices | **Complex Logic**. Math, coding, strict reasoning. | [Docs](providers/OPENAI.md) |
 | **Gemini** | `gemini-2.5-flash` | 5 voices | **Long Context**. Massive memory, complex prompts. | [Docs](providers/GEMINI.md) |
 | **AWS** | `nova-2-sonic` | 3 voices | **Enterprise**. High reliability, AWS compliance. | [Docs](providers/AWS.md) |

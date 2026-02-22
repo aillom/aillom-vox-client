@@ -59,7 +59,9 @@ Choose the tier that fits your budget. **AillomVox** is optimized for telephony 
 | **UltraVox** | $0.10 | Premium | High emotional intelligence |
 
 > **Why AillomVox?**  
-> Native optimized pipeline delivers **sub-500ms latency** and **8kHz support** at less than half the cost. Choose from **65 voices** with dynamic mid-conversation switching.
+> Native optimized pipeline delivers **sub-500ms latency** and **8kHz support** at exceptional cost. 
+> - **AillomVox**: Powered by Inworld TTS 1.5 with **65 voices**.
+> - **AillomVox Max**: Powered by **Cartesia Sonic 3** for ultra-realistic emotive speech natively supporting 42 languages.
 
 ---
 
@@ -129,7 +131,11 @@ ws.onmessage = (event) => {
 
 ## 🎤 Voices
 
-AillomVox uses **Inworld TTS 1.5** with 65 voices across 15 languages. See the full [Voice Catalog](docs/VOICES.md).
+AillomVox provides two distinct TTS engines depending on the chosen tier:
+1. **AillomVox**: Uses **Inworld TTS 1.5** with 65 voices across 15 languages. 
+2. **AillomVox Max**: Uses **Cartesia Sonic 3**, providing hyper-realistic, emotive low-latency voice models across 42 languages.
+
+See the full [Voice Catalog](docs/VOICES.md).
 
 ### Top Picks
 

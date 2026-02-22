@@ -8,6 +8,18 @@ Complete reference of all available voices across providers.
 
 **65 voices** verified via the Inworld TTS API. Each voice has a native language but supports multilingual synthesis across all 15 languages.
 
+---
+
+## AillomVox Max (Cartesia Sonic 3)
+
+Hyper-realistic emotive voices using the `sonic-3-latest` model.
+For AillomVox Max, you can use any valid **Cartesia Voice ID** (e.g., `694f9389-aac1-45b6-b726-9d9369183238`) in the `voice` parameter. AillomVox Max supports 42 languages natively.
+
+### Portuguese Pick
+- **Brazilian PT**: Use Cartesia's standard Voice IDs designed for PT-BR natively context or hyper-natural dialogue.
+
+---
+
 ### English (25 voices)
 
 **Male (14)**
