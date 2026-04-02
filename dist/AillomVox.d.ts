@@ -33,4 +33,16 @@ export declare class AillomVox {
     private sendConfig;
     private handleMessage;
     private emit;
+    /**
+     * Clones a voice using the Aillom Vox clone API.
+     * @param clip Blob or File with the audio recording.
+     * @param apiKey The API key for authorization.
+     * @param options name, description, and gateway url.
+     * @returns The generated voice ID.
+     */
+    static cloneVoice(clip: Blob, apiKey: string, options?: {
+        name?: string;
+        description?: string;
+        gatewayUrl?: string;
+    }): Promise<string>;
 }

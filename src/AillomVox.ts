@@ -169,4 +169,40 @@ export class AillomVox {
             listeners.forEach(handler => handler(data));
         }
     }
+
+    /**
+     * Clones a voice using the Aillom Vox clone API.
+     * @param clip Blob or File with the audio recording.
+     * @param apiKey The API key for authorization.
+     * @param options name, description, and gateway url.
+     * @returns The generated voice ID.
+     */
+    public static async cloneVoice(
+        clip: Blob, 
+        apiKey: string, 
+        options: { name?: string, description?: string, gatewayUrl?: string } = {}
+    ): Promise<string> {
+        const baseUrl = (options.gatewayUrl || 'https://wss.aillom.com').replace('wss://', 'https://').replace('ws://', 'http://');
+        
+        const formData = new FormData();
+        formData.append('clip', clip, 'clone.wav');
+        if (options.name) formData.append('name', options.name);
+        if (options.description) formData.append('description', options.description);
+
+        const response = await fetch(`${baseUrl}/api/voices/clone`, {
+            method: 'POST',
+            headers: {
+                'x-api-key': apiKey
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const err = await response.json().catch(() => ({}));
+            throw new Error(err.error || `Failed to clone voice: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.voice_id;
+    }
 }
