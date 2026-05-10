@@ -15,6 +15,15 @@ Companion server, dashboard, and adapter code ship from the Vox product monorepo
 npm install aillom-vox-client
 ```
 
+## Security considerations
+
+- **API keys are secrets.** Never commit real keys, never paste them into public tickets or client-side source that ships to browsers unless you accept that end users can extract them.
+- **Browser apps:** a key embedded in frontend JavaScript or Web apps is visible in DevTools and bundled files. Safer patterns: your **backend** exchanges a session cookie or a **short-lived token** for voice access, or proxies the WebSocket with the real key on the server.
+- **Do not put `apikey` in the WebSocket URL** (e.g. `wss://…/ws?apiKey=…`). That string is prone to leaking via server logs, reverse proxies, and referrer headers. Pass the key only in the first JSON **`config`** message (what this SDK does by default). If you pass a URL with sensitive query parameters, `normalizeWebSocketUrl()` logs a **console warning**.
+- **`debug: true`:** logs structured config with `apikey` **redacted**, but may still log other inbound JSON; transcripts can contain **PII**. Keep `debug` off in production.
+- **TLS:** use **`wss://`** against production (`wss://vox.aillom.com/ws`), not `ws://`, except on trusted local networks.
+- **User data:** voice audio and transcripts flow through the gateway; document your own privacy policy and minimize what you log on the client.
+
 ## Documentation in this repo
 
 | Doc | Purpose |

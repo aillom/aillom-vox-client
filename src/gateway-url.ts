@@ -1,5 +1,26 @@
 import { AILLOMVOX_DEFAULT_HTTP_ORIGIN, AILLOMVOX_DEFAULT_WS_URL } from './constants';
 
+/** Query parameter names that must not carry secrets (logs, referrers, browser history). */
+const SENSITIVE_WS_QUERY_KEYS = new Set(['apikey', 'api_key', 'x-api-key', 'token', 'secret']);
+
+function warnIfWebSocketUrlLeaksCredentials(url: string): void {
+    try {
+        const { searchParams } = new URL(url);
+        for (const name of searchParams.keys()) {
+            if (SENSITIVE_WS_QUERY_KEYS.has(name.toLowerCase())) {
+                console.warn(
+                    '[AillomVox] Do not put API keys in the WebSocket URL query string. ' +
+                        'Use the JSON `config` handshake (`apikey` field) instead. ' +
+                        'Query credentials appear in logs, proxies, and analytics.',
+                );
+                return;
+            }
+        }
+    } catch {
+        /* invalid URL — caller may pass partial strings; ignore */
+    }
+}
+
 /** Legacy WebSocket hostname — rewritten to `vox.aillom.com` for all clients. */
 const LEGACY_GATEWAY_HOSTNAME = 'wss.aillom.com';
 const CANONICAL_GATEWAY_HOSTNAME = 'vox.aillom.com';
@@ -38,6 +59,7 @@ export function normalizeWebSocketUrl(gatewayUrl?: string): string {
     if (!/\/ws\/?($|\?)/i.test(u)) {
         u = `${u.replace(/\/?$/, '')}/ws`;
     }
+    warnIfWebSocketUrlLeaksCredentials(u);
     return u;
 }
 

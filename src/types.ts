@@ -26,6 +26,11 @@ export interface ClientTool {
 }
 
 export interface AillomVoxConfig {
+    /**
+     * Gateway API key (`av_…`). **Secret** — treat like a password.
+     * In public web apps, anyone can extract a key shipped to the browser; prefer a
+     * server-issued short-lived token or a backend proxy that holds the real key.
+     */
     apiKey: string;
     /** Lowercase provider id, e.g. `aillomvox`, `openai`. Default: `aillomvox`. */
     provider?: VoxProviderId;
@@ -36,6 +41,10 @@ export interface AillomVoxConfig {
      */
     systemPrompt?: string;
     sampleRate?: 8000 | 16000 | 24000;
+    /**
+     * When true, logs outbound config (with `apikey` redacted) and unknown inbound JSON.
+     * Disable in production; logs and the `raw` event may contain user speech text (PII).
+     */
     debug?: boolean;
     tools?: ClientTool[];
     /** HTTPS(S) webhook for server-side session events (if enabled for your key). */

@@ -6,6 +6,8 @@ The AillomVox Gateway uses a WebSocket protocol for full-duplex audio streaming 
 
 **Endpoint**: `wss://vox.aillom.com/ws`
 
+Do **not** pass your API key in the WebSocket URL query string (`?apiKey=…`): it leaks via logs and intermediaries. Send `apikey` only in the first JSON `config` message (the default for this SDK). Some legacy integrations document query auth; migrate to in-band JSON when possible.
+
 > **Legacy hosts**: older integrations used `wss.aillom.com`. The TypeScript SDK (`normalizeWebSocketUrl`) rewrites that host to `vox.aillom.com` automatically; prefer the canonical endpoint above for new code.
 
 > **WebSocket authentication**: in-band (first JSON message), not HTTP headers on `/ws`. HTTP APIs (`GET /api/providers`, etc.) use `x-api-key` where applicable.
