@@ -9,7 +9,7 @@ Specialized Speech-to-Speech model (`ultravox-v0.7`).
   "provider": "ultravox",
   "voice": "Mark",
   "system_prompt": "You are a helpful assistant.",
-  "language": "pt-BR",
+  "language": "en-US",
   "sample_rate": 16000
 }
 ```

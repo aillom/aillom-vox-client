@@ -6,9 +6,9 @@ The AillomVox Gateway uses a WebSocket protocol for full-duplex audio streaming 
 
 **Endpoint**: `wss://vox.aillom.com/ws`
 
-> **Note**: Authentication is performed in-band (inside the first message), not via HTTP headers or query params.
+> **Legacy hosts**: older integrations used `wss.aillom.com`. The TypeScript SDK (`normalizeWebSocketUrl`) rewrites that host to `vox.aillom.com` automatically; prefer the canonical endpoint above for new code.
 
-## Message Flow
+> **WebSocket authentication**: in-band (first JSON message), not HTTP headers on `/ws`. HTTP APIs (`GET /api/providers`, etc.) use `x-api-key` where applicable.
 
 ```
 Client                              Server
@@ -37,7 +37,8 @@ The **first message** must be a flat JSON config object. Sending binary data bef
   "type": "config",
   "apikey": "av_your_api_key_here",
   "provider": "aillomvox",
-  "voice": "Edward",
+  "tts_engine": "inworld",
+  "voice": "Heitor",
   "language": "en-US",
   "sample_rate": 16000,
   "system_prompt": "You are a helpful assistant.",
@@ -58,15 +59,18 @@ The **first message** must be a flat JSON config object. Sending binary data bef
 | :--- | :--- | :--- | :--- |
 | `type` | ✅ | string | Must be `"config"` |
 | `apikey` | ✅ | string | Your AillomVox API key |
-| `provider` | ✅ | string | `aillomvox`, `openai`, `gemini`, `aws`, `ultravox`, `grok`, `qwen` |
+| `provider` | ✅ | string | e.g. `aillomvox`, `openai`, `gemini`, `aws`, `ultravox`, `grok`, `qwen` (see `GET /api/providers`) |
+| `tts_engine` | | string | Only when `provider` is `aillomvox`: `inworld`, `cartesia`, `xai`, `lmnt`, `soniox`, `rime` |
 | `sample_rate` | ✅ | number | `8000`, `16000`, or `24000` Hz |
 | `system_prompt` | ✅ | string | AI persona instructions |
 | `voice` | | string | Provider-specific voice ID |
-| `language` | | string | Locale code (e.g., `en-US`, `pt-BR`) |
+| `language` | | string | BCP 47 locale (e.g., `en-US`, `es-ES`) |
 | `first_message` | | string | Greeting spoken on connect |
 | `farewell_message` | | string | Message before session close |
 | `max_duration` | | number | Session limit in seconds (60–3600) |
 | `tools` | | array | Client-side tool definitions |
+| `webhook_url` | | string | Optional HTTPS webhook for server-side session events |
+| `model` | | string | Optional SKU override when the provider exposes multiple models |
 
 ## 2. Audio (Binary Messages)
 

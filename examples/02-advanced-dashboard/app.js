@@ -88,27 +88,27 @@ function drawVisualizer() {
 const presets = {
     aillomvox: {
         voice: "Heitor",
-        language: "pt-BR",
+        language: "en-US",
         sample_rate: "16000",
-        system_prompt: "Você é um assistente da Aillom. Seja conciso."
+        system_prompt: "You are a concise Aillom assistant."
     },
     aws: {
         voice: "matthew",
-        language: "pt-BR",
+        language: "en-US",
         sample_rate: "16000",
-        system_prompt: "You are a helpful assistant. Respond in Portuguese Brazilian."
+        system_prompt: "You are a helpful assistant."
     },
     openai: {
         voice: "alloy",
-        language: "pt-BR",
+        language: "en-US",
         sample_rate: "24000",
-        system_prompt: "Act as a helpful assistant. Respond in Portuguese Brazilian."
+        system_prompt: "You are a helpful assistant."
     },
     gemini: {
         voice: "Kore",
-        language: "pt-BR",
+        language: "en-US",
         sample_rate: "16000",
-        system_prompt: "You are a helpful assistant. Respond in Portuguese Brazilian."
+        system_prompt: "You are a helpful assistant."
     },
     ultravox: {
         voice: "Mark",

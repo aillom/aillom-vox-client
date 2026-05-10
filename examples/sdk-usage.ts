@@ -1,41 +1,58 @@
-import { AillomVox } from '../src'; // In production: from 'aillom-vox-client'
+import { AillomVox, normalizeWebSocketUrl } from '../src';
+import type { ToolCallEvent } from '../src';
 
-// 1. Initialize Client
+// In production: import { AillomVox, ... } from 'aillom-vox-client';
+
+async function demoCatalog() {
+    const catalog = await AillomVox.fetchProviders();
+    console.log('Provider catalog keys:', Object.keys(catalog as object));
+}
+
 const client = new AillomVox({
     apiKey: 'av_YOUR_API_KEY_HERE',
     debug: true,
-    voice: 'Edward',
-    systemPrompt: 'You are a helpful assistant.'
+    provider: 'aillomvox',
+    ttsEngine: 'inworld',
+    voice: 'Heitor',
+    language: 'en-US',
+    systemPrompt: 'You are a helpful assistant.',
+    firstMessage: 'Hello! How can I help you today?',
+    gatewayUrl: normalizeWebSocketUrl('https://vox.aillom.com'),
 });
 
-// 2. Setup Event Listeners
 client.on('connected', () => {
-    console.log('✅ Connected to AillomVox!');
+    console.log('Connected →', client.websocketUrl);
 });
 
 client.on('transcript', (msg) => {
     if (msg.role === 'assistant') {
-        console.log(`🤖 AI: ${msg.text}`);
+        console.log(`AI: ${msg.text}`);
     } else {
-        console.log(`👤 User: ${msg.text}`);
+        console.log(`User: ${msg.text}`);
     }
 });
 
 client.on('audio', (buffer) => {
-    // Received PCM 16-bit audio chunk
-    // Play with speaker or save to file
-    console.log(`🔊 Received ${buffer.byteLength} bytes of audio`);
+    console.log(`PCM chunk: ${buffer.byteLength} bytes`);
+});
+
+client.on('playback_clear_buffer', () => {
+    console.log('Barge-in: clear playback queue');
+});
+
+client.on('tool_call', (msg) => {
+    const m = msg as ToolCallEvent;
+    client.sendToolResult(m.call_id, 'ok');
 });
 
 client.on('disconnected', (reason) => {
-    console.log('❌ Disconnected:', reason);
+    console.log('Disconnected:', reason);
 });
 
-// 3. Connect
 async function start() {
+    await demoCatalog().catch(console.error);
     try {
         await client.connect();
-        console.log('Listening...');
     } catch (err) {
         console.error('Connection failed:', err);
     }

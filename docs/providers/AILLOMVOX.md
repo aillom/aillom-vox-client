@@ -182,4 +182,4 @@ Supports 15 languages: `en`, `pt`, `es`, `fr`, `de`, `it`, `ja`, `zh`, `ko`, `hi
 ## Best For
 - **General Purpose**: Customer support, sales, virtual assistants
 - **Telephony**: Extremely robust 8kHz support for SIP/Asterisk
-- **High Volume**: Lowest cost per minute ($0.03/min)
+- **High Volume**: Lowest list price on the unified gateway is **$0.03/min** (standard `aillomvox` TTS lanes). **AillomVox Max** (Cartesia Sonic-class path, typically `tts_engine: "cartesia"`) is **$0.06/min** on the public rate card — confirm on your billing dashboard.

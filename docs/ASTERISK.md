@@ -88,7 +88,7 @@ AILLOM_API_KEY=your-api-key-here
 ; Call extension 6000 to talk to AI
 exten => 6000,1,NoOp(AillomVox Direct Mode)
  same => n,Set(WS_URL=ws://vox.aillom.com/ws?apiKey=${AILLOM_API_KEY})
- same => n,Set(CONFIG={"provider":"aillomvox","voice":"Heitor","language":"pt-BR","system_prompt":"Você é um assistente. Seja conciso.","first_message":"Olá! Como posso ajudar?","sample_rate":8000})
+ same => n,Set(CONFIG={"provider":"aillomvox","voice":"Heitor","language":"en-US","system_prompt":"You are a concise assistant.","first_message":"Hello! How can I help?","sample_rate":8000})
  same => n,Answer()
  same => n,AudioSocket(${WS_URL},${CONFIG})
  same => n,Hangup()
@@ -100,10 +100,10 @@ exten => 6000,1,NoOp(AillomVox Direct Mode)
 {
   "provider": "aillomvox",
   "voice": "Heitor",
-  "language": "pt-BR",
-  "system_prompt": "Você é um assistente virtual.",
-  "first_message": "Olá! Como posso ajudar?",
-  "farewell_message": "Obrigado por ligar. Até logo!",
+  "language": "en-US",
+  "system_prompt": "You are a helpful virtual assistant.",
+  "first_message": "Hello! How can I help?",
+  "farewell_message": "Thank you for calling. Goodbye!",
   "sample_rate": 8000,
   "max_duration": 300
 }
@@ -162,8 +162,8 @@ const server = net.createServer((socket) => {
     client.connect({
         provider: 'aillomvox',
         voice: 'Heitor',
-        language: 'pt-BR',
-        system_prompt: 'Você é um assistente. Se o usuário pedir, transfira para ramal 100 ou desligue a ligação.',
+        language: 'en-US',
+        system_prompt: 'You are a helpful assistant. If the caller asks, transfer to extension 100 or end the call.',
         sample_rate: 8000,
         tools: [{
             name: 'hangup',
@@ -268,20 +268,20 @@ Call extension 7000 and say:
 
 ### Codec Conversion (ulaw/alaw → slin)
 
-**No Brasil e na maioria dos países**, trunks SIP usam:
-- **ulaw** (G.711μ) - Padrão nos EUA/Brasil
-- **alaw** (G.711a) - Padrão na Europa
+**In Brazil and most countries**, SIP trunks use:
+- **ulaw** (G.711μ) — common in North America and Brazil
+- **alaw** (G.711a) — common in Europe
 
-**Asterisk converte automaticamente**:
+**Asterisk converts automatically**:
 ```
 Trunk SIP (ulaw/alaw) → Asterisk → slin → AudioSocket → AillomVox
 ```
 
-Não precisa configurar nada! Asterisk faz a conversão transparente.
+No extra codec configuration is required — Asterisk performs conversion transparently.
 
 ### Forcing Codec (Optional)
 
-Se tiver problemas de áudio, force o codec:
+If you have audio issues, force the codec:
 
 ```ini
 exten => 6000,1,Set(CHANNEL(audioreadformat)=slin)
@@ -290,7 +290,7 @@ exten => 6000,1,Set(CHANNEL(audioreadformat)=slin)
  same => n,AudioSocket(...)
 ```
 
-Isso garante que Asterisk sempre entrega PCM 16-bit para o AudioSocket.
+This ensures Asterisk always delivers 16-bit PCM to AudioSocket.
 
 ---
 
@@ -364,7 +364,7 @@ exten => 6000,1,Set(CHANNEL(audioreadformat)=slin)
 |-------|------|-------------|---------|
 | `provider` | string | `aillomvox`, `gemini`, `openai`, `qwen`, `grok`, `aws`, `ultravox` | **Required** |
 | `voice` | string | Voice ID (provider-specific) | **Required** |
-| `language` | string | `pt-BR`, `en-US`, `es-ES`, etc | `en-US` |
+| `language` | string | BCP 47 tag (e.g. `en-US`, `es-ES`) | `en-US` |
 | `system_prompt` | string | Instructions for AI | **Required** |
 | `first_message` | string | Initial greeting | `null` |
 | `farewell_message` | string | Goodbye message | `null` |

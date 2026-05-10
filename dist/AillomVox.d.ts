@@ -1,44 +1,53 @@
-import { AillomVoxConfig, TranscriptEvent, ToolCallEvent } from './types';
+import { AillomVoxConfig, EventHandler, ProvidersCatalogOptions } from './types';
+/**
+ * Browser or Node.js WebSocket client for the AillomVox voice gateway.
+ *
+ * Protocol summary: after `connect()`, the first outbound message must be the JSON `config`
+ * handshake (sent automatically). All further outbound binary messages are PCM16 mono chunks.
+ */
 export declare class AillomVox {
     private ws;
-    private config;
-    private eventListeners;
+    private readonly config;
+    private readonly eventListeners;
     private isConnected;
-    private url;
+    private readonly url;
     constructor(config: AillomVoxConfig);
+    /** Resolved WebSocket URL after normalization. */
+    get websocketUrl(): string;
     /**
-     * Connects to the AillomVox Gateway
+     * Connects to the gateway and sends the `config` handshake as the first message.
      */
     connect(): Promise<void>;
     /**
-     * Sends audio chunk (PCM 16-bit) to the AI
+     * Send microphone capture to the model. PCM16 LE mono at the configured `sampleRate`.
      */
     sendAudio(chunk: ArrayBuffer | Int16Array | Buffer): void;
     /**
-     * Sends a tool result back to the AI
+     * Reply to a `tool_call` event within 15 seconds or the model may stall.
      */
-    sendToolResult(callId: string, result: any): void;
-    /**
-     * Disconnects the session
-     */
+    sendToolResult(callId: string, result: unknown): void;
+    /** Ask the server to end the call (mirrors dashboard playground). */
+    sendHangup(): void;
     disconnect(): void;
-    /**
-     * Subscribes to an event
-     */
-    on(event: 'audio', handler: (data: ArrayBuffer) => void): void;
-    on(event: 'transcript', handler: (data: TranscriptEvent) => void): void;
-    on(event: 'tool_call', handler: (data: ToolCallEvent) => void): void;
-    on(event: 'error', handler: (error: any) => void): void;
-    on(event: 'connected' | 'disconnected' | 'interruption', handler: (data: any) => void): void;
+    on(event: string, handler: EventHandler): void;
+    off(event: string, handler: EventHandler): void;
     private sendConfig;
     private handleMessage;
     private emit;
     /**
-     * Clones a voice using the Aillom Vox clone API.
-     * @param clip Blob or File with the audio recording.
-     * @param apiKey The API key for authorization.
-     * @param options name, description, and gateway url.
-     * @returns The generated voice ID.
+     * `GET /api/providers` — pricing, models, and nested voices (public; optional auth for workspace scoping).
+     */
+    static fetchProviders(options?: ProvidersCatalogOptions): Promise<unknown>;
+    /**
+     * `GET /api/voices` — optional provider filter matches dashboard catalog keys.
+     */
+    static fetchVoices(options?: {
+        baseUrl?: string;
+        provider?: string;
+        apiKey?: string;
+    }): Promise<unknown>;
+    /**
+     * Upload a short clean recording to create a cloned voice handle.
      */
     static cloneVoice(clip: Blob, apiKey: string, options?: {
         name?: string;
