@@ -1,7 +1,11 @@
+/**
+ * Run from repo root after `npm install` and `npm run build`:
+ *   npx tsx examples/sdk-usage.ts
+ *
+ * Uses `../src` for local development. Published apps should import from `aillom-vox-client`.
+ */
 import { AillomVox, normalizeWebSocketUrl } from '../src';
 import type { ToolCallEvent } from '../src';
-
-// In production: import { AillomVox, ... } from 'aillom-vox-client';
 
 async function demoCatalog() {
     const catalog = await AillomVox.fetchProviders();

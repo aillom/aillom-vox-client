@@ -39,10 +39,12 @@ connectBtn.onclick = async () => {
             type: 'config',
             apikey: apiKey,
             provider: 'aillomvox',
+            tts_engine: 'inworld',
             voice: 'Edward',
             language: 'en-US',
             sample_rate: 16000,
             system_prompt: 'You are a helpful assistant. Be concise and friendly.',
+            first_message: 'Hello! How can I help you today?',
             tools: []
         };
         socket.send(JSON.stringify(handshake));
@@ -95,7 +97,10 @@ connectBtn.onclick = async () => {
 
     socket.onclose = () => {
         statusDiv.textContent = '🔴 Disconnected';
-        disconnect();
+        clearPlaybackBuffer();
+        socket = null;
+        cleanupAudio();
+        toggleButtons(false);
     };
 };
 
@@ -103,10 +108,28 @@ disconnectBtn.onclick = disconnect;
 
 function disconnect() {
     clearPlaybackBuffer();
-    if (socket) socket.close();
-    if (audioContext) audioContext.close();
-    if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+    if (socket) {
+        socket.onclose = null;
+        socket.close();
+        socket = null;
+    }
+    cleanupAudio();
     toggleButtons(false);
+}
+
+function cleanupAudio() {
+    if (audioContext && audioContext.state !== 'closed') audioContext.close();
+    audioContext = null;
+    if (mediaStream) {
+        mediaStream.getTracks().forEach((t) => t.stop());
+        mediaStream = null;
+    }
+    if (processor) {
+        try {
+            processor.disconnect();
+        } catch (_) { /* noop */ }
+        processor = null;
+    }
 }
 
 function toggleButtons(connected) {
@@ -123,7 +146,7 @@ async function startMicrophone() {
     processor = audioContext.createScriptProcessor(4096, 1, 1);
 
     processor.onaudioprocess = (e) => {
-        if (socket.readyState !== WebSocket.OPEN) return;
+        if (!socket || socket.readyState !== WebSocket.OPEN) return;
 
         const inputData = e.inputBuffer.getChannelData(0);
         // Convert Float32 to Int16 for Server

@@ -122,6 +122,8 @@ ws.onmessage = (event) => {
 
 ## Examples
 
+See **[examples/README.md](examples/README.md)** for how to run the browser demos and the TypeScript sample (`npx serve`, `tsx`, API keys).
+
 | Path | Description |
 | :--- | :--- |
 | [examples/sdk-usage.ts](examples/sdk-usage.ts) | TypeScript sample with catalog fetch + handlers |

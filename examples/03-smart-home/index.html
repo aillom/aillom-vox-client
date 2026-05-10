@@ -201,6 +201,8 @@
         let processor;
         let mediaStream;
         let isConnected = false;
+        let scheduledSources = [];
+        let nextPlayTime = 0;
 
         const micBtn = document.getElementById('micBtn');
         const statusText = document.getElementById('statusText');
@@ -272,9 +274,12 @@
                     type: 'config',
                     apikey: apiKey,
                     provider: 'aillomvox',
+                    tts_engine: 'inworld',
                     voice: 'Heitor',
-                    system_prompt: 'You are a smart home assistant. Control the house devices based on user requests.',
+                    language: 'en-US',
                     sample_rate: 16000,
+                    first_message: 'Hi! I can control the lights, thermostat, and security. What would you like?',
+                    system_prompt: 'You are a smart home assistant. Control the house devices based on user requests.',
                     tools: tools
                 }));
 
@@ -284,8 +289,13 @@
             socket.onmessage = (event) => {
                 if (typeof event.data === 'string') {
                     const msg = JSON.parse(event.data);
-                    if (msg.type === 'tool_call') handleTool(msg);
-                    if (msg.type === 'hangup') disconnect();
+                    if (msg.type === 'tool_call') {
+                        handleTool(msg);
+                    } else if (msg.type === 'playback_clear_buffer') {
+                        clearPlaybackBuffer();
+                    } else if (msg.type === 'hangup') {
+                        disconnect();
+                    }
                 } else {
                     playAudio(event.data);
                 }
@@ -295,35 +305,58 @@
         }
 
         function disconnect() {
+            clearPlaybackBuffer();
             isConnected = false;
             micBtn.classList.remove('listening');
             statusText.textContent = 'Ready to connect...';
-            if (socket) socket.close();
-            if (audioContext) audioContext.close();
-            if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+            if (socket) {
+                socket.onclose = null;
+                socket.close();
+                socket = null;
+            }
+            if (audioContext && audioContext.state !== 'closed') audioContext.close();
+            audioContext = null;
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(t => t.stop());
+                mediaStream = null;
+            }
+            if (processor) {
+                try { processor.disconnect(); } catch (_) {}
+                processor = null;
+            }
+        }
+
+        function clearPlaybackBuffer() {
+            for (const source of scheduledSources) {
+                try { source.stop(); } catch (_) {}
+            }
+            scheduledSources = [];
+            nextPlayTime = 0;
         }
 
         function handleTool(msg) {
-            console.log('Tool:', msg.name, msg.args);
+            const args = msg.args || msg.arguments || {};
+            console.log('Tool:', msg.name, args);
 
             if (msg.name === 'set_light') {
-                state[msg.args.room] = msg.args.state;
+                state[args.room] = args.state;
                 updateUI();
-                respondTool(msg.call_id, `Light in ${msg.args.room} turned ${msg.args.state ? 'ON' : 'OFF'}`);
+                respondTool(msg.call_id, `Light in ${args.room} turned ${args.state ? 'ON' : 'OFF'}`);
             }
             else if (msg.name === 'set_temperature') {
-                state.temperature = msg.args.degrees;
+                state.temperature = args.degrees;
                 updateUI();
-                respondTool(msg.call_id, `Temperature set to ${msg.args.degrees}`);
+                respondTool(msg.call_id, `Temperature set to ${args.degrees}`);
             }
             else if (msg.name === 'set_security') {
-                state.security = msg.args.arm;
+                state.security = args.arm;
                 updateUI();
-                respondTool(msg.call_id, `Security system ${msg.args.arm ? 'ARMED' : 'DISARMED'}`);
+                respondTool(msg.call_id, `Security system ${args.arm ? 'ARMED' : 'DISARMED'}`);
             }
         }
 
         function respondTool(callId, result) {
+            if (!socket || socket.readyState !== WebSocket.OPEN) return;
             socket.send(JSON.stringify({
                 type: 'tool_result',
                 call_id: callId,
@@ -336,15 +369,15 @@
             const source = audioContext.createMediaStreamSource(mediaStream);
             processor = audioContext.createScriptProcessor(4096, 1, 1);
             processor.onaudioprocess = (e) => {
-                if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(floatTo16BitPCM(e.inputBuffer.getChannelData(0)));
-                }
+                if (!socket || socket.readyState !== WebSocket.OPEN) return;
+                socket.send(floatTo16BitPCM(e.inputBuffer.getChannelData(0)));
             };
             source.connect(processor);
             processor.connect(audioContext.destination);
         }
 
         function playAudio(buffer) {
+            if (!audioContext || audioContext.state === 'closed') return;
             const float32 = new Float32Array(buffer.byteLength / 2);
             const view = new DataView(buffer);
             for (let i = 0; i < float32.length; i++) {
@@ -356,7 +389,16 @@
             const source = audioContext.createBufferSource();
             source.buffer = audioBuf;
             source.connect(audioContext.destination);
-            source.start();
+
+            const now = audioContext.currentTime;
+            const startTime = Math.max(now, nextPlayTime);
+            source.start(startTime);
+            nextPlayTime = startTime + audioBuf.duration;
+
+            scheduledSources.push(source);
+            source.onended = () => {
+                scheduledSources = scheduledSources.filter(s => s !== source);
+            };
         }
 
         function floatTo16BitPCM(input) {

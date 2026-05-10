@@ -212,6 +212,9 @@ connectBtn.onclick = async () => {
                 first_message: inputs.first_message.value,
                 tools: tools
             };
+            if (inputs.provider.value === 'aillomvox') {
+                handshake.tts_engine = 'inworld';
+            }
 
             socket.send(JSON.stringify(handshake));
             await startAudio();
@@ -316,7 +319,7 @@ async function startAudio() {
     processor = audioContext.createScriptProcessor(4096, 1, 1);
 
     processor.onaudioprocess = (e) => {
-        if (socket.readyState !== WebSocket.OPEN) return;
+        if (!socket || socket.readyState !== WebSocket.OPEN) return;
         const inputData = e.inputBuffer.getChannelData(0);
         socket.send(floatTo16BitPCM(inputData));
     };
