@@ -5,7 +5,7 @@ exports.VOX_PROVIDER_RATECARD = [
     {
         label: 'AillomVox',
         provider: 'aillomvox',
-        ttsEngineHint: 'inworld · LMNT · soniox · rime · xai (standard lanes)',
+        ttsEngineHint: 'LMNT · Cartesia · xAI · soniox · rime (standard lanes)',
         usdPerMinute: 0.03,
         tier: 'Gateway',
         modelSummary: 'GPT-OSS 120B · Whisper · Inworld 1.5',

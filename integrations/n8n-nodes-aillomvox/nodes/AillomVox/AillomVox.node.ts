@@ -134,10 +134,6 @@ export class AillomVox implements INodeType {
                         value: 'playht',
                     },
                     {
-                        name: 'Inworld',
-                        value: 'inworld',
-                    },
-                    {
                         name: 'Azure',
                         value: 'azure',
                     },

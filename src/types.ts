@@ -56,7 +56,8 @@ export interface AillomVoxConfig {
     /** Spoken before forced hangup when `max_duration` is reached (see protocol docs). */
     farewellMessage?: string;
     /**
-     * Only when `provider === "aillomvox"`. Selects one of the TTS stacks from `GET /api/providers`.
+     * When `provider === "aillomvox"`, selects the TTS stack from `GET /api/providers`.
+     * Defaults to **`lmnt`** when omitted (the SDK sets `tts_engine` in the handshake).
      */
     ttsEngine?: AillomVoxTtsEngineId | string;
     /** Optional model override when the provider exposes multiple SKUs (see `/api/providers`). */

@@ -87,7 +87,7 @@ function drawVisualizer() {
 // --- Provider Presets (Universal) ---
 const presets = {
     aillomvox: {
-        voice: "Heitor",
+        voice: "lily",
         language: "en-US",
         sample_rate: "16000",
         system_prompt: "You are a concise Aillom assistant."
@@ -213,7 +213,7 @@ connectBtn.onclick = async () => {
                 tools: tools
             };
             if (inputs.provider.value === 'aillomvox') {
-                handshake.tts_engine = 'inworld';
+                handshake.tts_engine = 'lmnt';
             }
 
             socket.send(JSON.stringify(handshake));

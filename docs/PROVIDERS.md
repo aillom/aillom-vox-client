@@ -33,7 +33,7 @@ Same numbers as the [live marketing table](https://vox.aillom.com) (`providerPri
 
 | Product | `provider` | `tts_engine` (gateway only) | Tier | USD/min | Model / stack (site copy) |
 | :--- | :--- | :--- | :--- | ---: | :--- |
-| AillomVox | `aillomvox` | Standard lanes (`inworld`, `lmnt`, `rime`, `soniox`, `xai`, …) | Gateway | **0.03** | GPT-OSS 120B · Whisper · Inworld 1.5 |
+| AillomVox | `aillomvox` | Standard lanes (`lmnt`, `rime`, `soniox`, `xai`, Cartesia Sonic-class lane, …) | Gateway | **0.03** | GPT-OSS 120B · Whisper · LMNT (default lane) |
 | AillomVox Max | `aillomvox` | **`cartesia`** (Cartesia Sonic-class path) | Gateway | **0.06** | Groq · Soniox · Cartesia |
 | Gemini | `gemini` | — | S2S | **0.06** | gemini-2.5-flash |
 | AWS Nova | `aws` | — | S2S | **0.06** | nova-2-sonic |
@@ -52,12 +52,13 @@ When `provider` is `aillomvox`, send **`tts_engine`** in the first JSON message 
 
 | `tts_engine` | Role |
 | :--- | :--- |
-| `inworld` | Inworld voices (telephony-friendly catalog). |
+| **`lmnt`** | **Recommended default.** LMNT TTS voices (see `tts_options` in `GET /api/providers`). |
 | `cartesia` | Cartesia Sonic-class voices (premium track). |
 | `xai` | xAI TTS lane. |
-| `lmnt` | LMNT. |
 | `soniox` | Soniox. |
 | `rime` | Rime AI. |
+
+Some older deployments still expose **`inworld`**; prefer **`lmnt`** for new integrations. Voice IDs are **not portable** across engines — always pair `tts_engine` with voices from `/api/providers` for that engine.
 
 Example handshake fragment:
 
@@ -66,8 +67,8 @@ Example handshake fragment:
   "type": "config",
   "apikey": "av_…",
   "provider": "aillomvox",
-  "tts_engine": "inworld",
-  "voice": "Heitor",
+  "tts_engine": "lmnt",
+  "voice": "lily",
   "sample_rate": 16000,
   "system_prompt": "You are a concise assistant for US English callers."
 }
@@ -81,8 +82,8 @@ import { AillomVox } from 'aillom-vox-client';
 const client = new AillomVox({
   apiKey: process.env.AILLOMVOX_KEY!,
   provider: 'aillomvox',
-  ttsEngine: 'inworld',
-  voice: 'Heitor',
+  ttsEngine: 'lmnt',
+  voice: 'lily',
   language: 'en-US',
   systemPrompt: 'You are a professional assistant.',
   firstMessage: 'Hello! How can I help you today?',

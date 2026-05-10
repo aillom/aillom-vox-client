@@ -1,14 +1,18 @@
 # Voice Catalog
 
-Complete reference of all available voices across providers.
+Prefer **`GET https://vox.aillom.com/api/providers`** for authoritative voice IDs — they depend on **`tts_engine`**.
+
+## AillomVox — LMNT (default `tts_engine`)
+
+The recommended default is **`tts_engine: "lmnt"`**. Use voice ids from the **`lmnt`** entry under `aillomvox.tts_options` in `/api/providers` (for example **`lily`** or **`cole`** in many deployments). These ids are **not** valid for other engines.
 
 ---
 
-## AillomVox (Inworld TTS 1.5)
+## Appendix: legacy Inworld catalog (`tts_engine: inworld`)
+
+Some gateways still support **Inworld** when **`tts_engine`** is **`inworld`**. The tables below document that **legacy** name list (65 voices). Do **not** use these names with **`lmnt`** — use the `/api/providers` list for LMNT instead.
 
 **65 voices** verified via the Inworld TTS API. Each voice has a native language but supports multilingual synthesis across all 15 languages.
-
----
 
 ## AillomVox Max (Cartesia Sonic 3)
 
@@ -221,7 +225,9 @@ For AillomVox Max, you can use any valid **Cartesia Voice ID** (e.g., `694f9389-
 en, pt, es, fr, de, it, ja, zh, ko, hi, ar, ru, pl, nl, he
 ```
 
-### Language Defaults (AillomVox)
+### Language defaults (legacy Inworld appendix only)
+
+When using **`tts_engine: "inworld"`** (legacy), typical defaults were:
 
 | Code | Language | Default Voice |
 | :--- | :--- | :--- |
@@ -229,3 +235,5 @@ en, pt, es, fr, de, it, ja, zh, ko, hi, ar, ru, pl, nl, he
 | `pt-BR` | Portuguese (Brazil) | Heitor |
 | `es-ES` | Spanish | Diego |
 | All others | — | Edward |
+
+For **`lmnt`**, use **`GET /api/providers`** instead of this table.

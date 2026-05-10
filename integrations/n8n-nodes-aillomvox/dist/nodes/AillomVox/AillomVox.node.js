@@ -127,10 +127,6 @@ class AillomVox {
                             value: 'playht',
                         },
                         {
-                            name: 'Inworld',
-                            value: 'inworld',
-                        },
-                        {
                             name: 'Azure',
                             value: 'azure',
                         },

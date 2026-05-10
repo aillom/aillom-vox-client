@@ -145,7 +145,7 @@ export class AillomVox {
             type: 'config',
             apikey: this.config.apiKey,
             provider: (this.config.provider ?? 'aillomvox').toLowerCase(),
-            voice: this.config.voice ?? 'Heitor',
+            voice: this.config.voice ?? 'lily',
             language: this.config.language ?? 'en-US',
             sample_rate: this.config.sampleRate ?? 16000,
             tools: this.config.tools ?? [],
@@ -171,8 +171,8 @@ export class AillomVox {
         }
 
         const provider = String(payload.provider);
-        if (provider === 'aillomvox' && this.config.ttsEngine) {
-            payload.tts_engine = this.config.ttsEngine;
+        if (provider === 'aillomvox') {
+            payload.tts_engine = this.config.ttsEngine ?? 'lmnt';
         }
 
         if (this.config.debug) {

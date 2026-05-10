@@ -88,7 +88,7 @@ AILLOM_API_KEY=your-api-key-here
 ; Call extension 6000 to talk to AI
 exten => 6000,1,NoOp(AillomVox Direct Mode)
  same => n,Set(WS_URL=ws://vox.aillom.com/ws?apiKey=${AILLOM_API_KEY})
- same => n,Set(CONFIG={"provider":"aillomvox","voice":"Heitor","language":"en-US","system_prompt":"You are a concise assistant.","first_message":"Hello! How can I help?","sample_rate":8000})
+ same => n,Set(CONFIG={"provider":"aillomvox","tts_engine":"lmnt","voice":"lily","language":"en-US","system_prompt":"You are a concise assistant.","first_message":"Hello! How can I help?","sample_rate":8000})
  same => n,Answer()
  same => n,AudioSocket(${WS_URL},${CONFIG})
  same => n,Hangup()
@@ -99,7 +99,8 @@ exten => 6000,1,NoOp(AillomVox Direct Mode)
 ```json
 {
   "provider": "aillomvox",
-  "voice": "Heitor",
+  "tts_engine": "lmnt",
+  "voice": "lily",
   "language": "en-US",
   "system_prompt": "You are a helpful virtual assistant.",
   "first_message": "Hello! How can I help?",
@@ -161,7 +162,7 @@ const server = net.createServer((socket) => {
     // Register client tools
     client.connect({
         provider: 'aillomvox',
-        voice: 'Heitor',
+        voice: 'lily',
         language: 'en-US',
         system_prompt: 'You are a helpful assistant. If the caller asks, transfer to extension 100 or end the call.',
         sample_rate: 8000,
@@ -299,7 +300,7 @@ This ensures Asterisk always delivers 16-bit PCM to AudioSocket.
 ### AillomVox (Best for Telephony)
 
 ```ini
-exten => 7001,1,Set(CONFIG={"provider":"aillomvox","voice":"Heitor","sample_rate":8000})
+exten => 7001,1,Set(CONFIG={"provider":"aillomvox","tts_engine":"lmnt","voice":"lily","sample_rate":8000})
  same => n,AudioSocket(ws://vox.aillom.com/ws?apiKey=${AILLOM_API_KEY},${CONFIG})
 ```
 

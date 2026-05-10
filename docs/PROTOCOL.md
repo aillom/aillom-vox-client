@@ -39,8 +39,8 @@ The **first message** must be a flat JSON config object. Sending binary data bef
   "type": "config",
   "apikey": "av_your_api_key_here",
   "provider": "aillomvox",
-  "tts_engine": "inworld",
-  "voice": "Heitor",
+  "tts_engine": "lmnt",
+  "voice": "lily",
   "language": "en-US",
   "sample_rate": 16000,
   "system_prompt": "You are a helpful assistant.",
@@ -62,7 +62,7 @@ The **first message** must be a flat JSON config object. Sending binary data bef
 | `type` | ✅ | string | Must be `"config"` |
 | `apikey` | ✅ | string | Your AillomVox API key |
 | `provider` | ✅ | string | e.g. `aillomvox`, `openai`, `gemini`, `aws`, `ultravox`, `grok`, `qwen` (see `GET /api/providers`) |
-| `tts_engine` | | string | Only when `provider` is `aillomvox`: `inworld`, `cartesia`, `xai`, `lmnt`, `soniox`, `rime` |
+| `tts_engine` | | string | When `provider` is `aillomvox`. Common values: **`lmnt`** (recommended default), `cartesia`, `xai`, `soniox`, `rime`. Some deployments may still accept legacy `inworld`. Omit to use gateway/client defaults (`lmnt` in this SDK). |
 | `sample_rate` | ✅ | number | `8000`, `16000`, or `24000` Hz |
 | `system_prompt` | ✅ | string | AI persona instructions |
 | `voice` | | string | Provider-specific voice ID |
