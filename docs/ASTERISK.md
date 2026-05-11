@@ -88,7 +88,7 @@ AILLOM_API_KEY=your-api-key-here
 ; Call extension 6000 to talk to AI
 exten => 6000,1,NoOp(AillomVox Direct Mode)
  same => n,Set(WS_URL=ws://vox.aillom.com/ws?apiKey=${AILLOM_API_KEY})
- same => n,Set(CONFIG={"provider":"aillomvox","tts_engine":"lmnt","voice":"lily","language":"en-US","system_prompt":"You are a concise assistant.","first_message":"Hello! How can I help?","sample_rate":8000})
+ same => n,Set(CONFIG={"provider":"aillomvox","tts_engine":"inworld","voice":"Aanya","language":"en-US","system_prompt":"You are a concise assistant.","first_message":"Hello! How can I help?","sample_rate":8000})
  same => n,Answer()
  same => n,AudioSocket(${WS_URL},${CONFIG})
  same => n,Hangup()
@@ -99,8 +99,8 @@ exten => 6000,1,NoOp(AillomVox Direct Mode)
 ```json
 {
   "provider": "aillomvox",
-  "tts_engine": "lmnt",
-  "voice": "lily",
+  "tts_engine": "inworld",
+  "voice": "Aanya",
   "language": "en-US",
   "system_prompt": "You are a helpful virtual assistant.",
   "first_message": "Hello! How can I help?",
@@ -141,7 +141,7 @@ npm install aillom-vox-client asterisk-manager
 
 ```javascript
 const net = require('net');
-const AillomVoxClient = require('aillom-vox-client');
+const { AillomVox } = require('aillom-vox-client');
 const AMI = require('asterisk-manager');
 
 // AMI connection for Asterisk control
@@ -154,18 +154,15 @@ const server = net.createServer((socket) => {
     console.log('[Bridge] New call from Asterisk');
 
     // Connect to AillomVox
-    const client = new AillomVoxClient({
+    const client = new AillomVox({
         apiKey: process.env.AILLOM_API_KEY,
-        url: 'wss://vox.aillom.com/ws'
-    });
-
-    // Register client tools
-    client.connect({
+        gatewayUrl: 'wss://vox.aillom.com/ws',
         provider: 'aillomvox',
-        voice: 'lily',
+        ttsEngine: 'inworld',
+        voice: 'Aanya',
         language: 'en-US',
-        system_prompt: 'You are a helpful assistant. If the caller asks, transfer to extension 100 or end the call.',
-        sample_rate: 8000,
+        systemPrompt: 'You are a helpful assistant. If the caller asks, transfer to extension 100 or end the call.',
+        sampleRate: 8000,
         tools: [{
             name: 'hangup',
             description: 'End the call',
@@ -182,6 +179,8 @@ const server = net.createServer((socket) => {
             }
         }]
     });
+
+    client.connect();
 
     // Handle tool calls from AI
     client.on('tool_call', async (tool) => {
@@ -300,13 +299,13 @@ This ensures Asterisk always delivers 16-bit PCM to AudioSocket.
 ### AillomVox (Best for Telephony)
 
 ```ini
-exten => 7001,1,Set(CONFIG={"provider":"aillomvox","tts_engine":"lmnt","voice":"lily","sample_rate":8000})
+exten => 7001,1,Set(CONFIG={"provider":"aillomvox","tts_engine":"inworld","voice":"Aanya","sample_rate":8000})
  same => n,AudioSocket(ws://vox.aillom.com/ws?apiKey=${AILLOM_API_KEY},${CONFIG})
 ```
 
-**Why?** Lowest latency, optimized for 8kHz, $0.03/min.
+**Why?** Gateway path with selectable TTS engines, optimized telephony settings, public list price $0.04/min.
 
-### Gemini 2.5 Flash
+### Gemini Live
 
 ```ini
 exten => 7002,1,Set(CONFIG={"provider":"gemini","voice":"Puck","sample_rate":8000})

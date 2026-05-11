@@ -9,8 +9,9 @@ This node allows you to natively interact with the AillomVox API within your n8n
 The AillomVox node supports the following operations:
 
 ### Resource: Info
-*   **Get Voices**: Returns the full list of available voices, filterable by provider (AillomVox, ElevenLabs, PlayHT, etc.).
-*   **Get Providers**: Returns the list of supported AI providers and their respective pricing per minute.
+*   **Get Voices**: Returns available voices, filterable by current providers/TTS engines such as AillomVox, Inworld, LMNT, Rime, Fish Audio, Soniox, xAI, Gemini, AWS, Qwen, OpenAI, Grok, and Ultravox.
+*   **Get Providers**: Returns the supported realtime providers and nested AillomVox TTS options.
+*   **Get Pricing**: Returns the public USD/min rate card from `/api/pricing`.
 
 ### Resource: Recording
 *   **Get Download URL**: Generates a secure, temporary link (Presigned URL) to download a call recording, given its ID.

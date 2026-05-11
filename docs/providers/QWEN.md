@@ -1,12 +1,13 @@
-# Qwen (Alibaba Cloud)
+# Qwen Omni
 
-Open-source based, highly efficient model (`qwen3-omni-flash-realtime`).
+AillomVox currently exposes Qwen through `qwen3.5-omni-flash-realtime`.
 
 ## Configuration
 
 ```json
 {
   "provider": "qwen",
+  "voice": "Tina",
   "system_prompt": "You are a helpful assistant.",
   "language": "en-US",
   "sample_rate": 16000
@@ -15,13 +16,14 @@ Open-source based, highly efficient model (`qwen3-omni-flash-realtime`).
 
 ## Voices
 
-Model-dependent. Voice selection depends on the underlying model version.
+Use the live catalog:
 
-## Features
-- **Cost Effective**: Generally lower cost than OpenAI.
-- **Fast**: "Flash" model is optimized for speed.
-- **No Tool Support**: Function calling / Client Tools are **not supported** in WebSocket Realtime mode. Use AWS, OpenAI, or Gemini for scenarios requiring tools.
+```typescript
+const voices = await AillomVox.fetchVoices({ provider: 'qwen' });
+```
 
-## Best For
-- **Cost-Sensitive**: High volume conversational AI.
-- **Asian Markets**: Excellent support for Mandarin/English/Asian languages.
+Current public catalog count: 55 voices.
+
+## Notes
+
+Realtime Qwen may not emit client `tool_call` events the same way as OpenAI/Gemini. For strict tool pipelines, use AillomVox, OpenAI, Gemini, or AWS, or design fallback behavior.

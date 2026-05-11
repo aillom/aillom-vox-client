@@ -1,13 +1,13 @@
-# UltraVox
+# Ultravox
 
-Specialized Speech-to-Speech model (`ultravox-v0.7`).
+AillomVox currently exposes Ultravox as `ultravox-70B`.
 
 ## Configuration
 
 ```json
 {
   "provider": "ultravox",
-  "voice": "Mark",
+  "voice": "Aakash-Hindi",
   "system_prompt": "You are a helpful assistant.",
   "language": "en-US",
   "sample_rate": 16000
@@ -16,14 +16,20 @@ Specialized Speech-to-Speech model (`ultravox-v0.7`).
 
 ## Voices
 
-| Voice | Style |
-| :--- | :--- |
-| **Mark** | Male |
-| **Jessica** | Female |
+Use the live catalog:
 
-## Features
-- **Nuance**: High capability in understanding tone and emotion.
-- **Dynamic Voices**: Voice list is fetched dynamically from their API.
+```typescript
+const voices = await AillomVox.fetchVoices({ provider: 'ultravox' });
+```
 
-## Best For
-- **Emotional Intelligence**: Empathetic support or counseling bots.
+Current public catalog count: 239 voices.
+
+## Voice clone
+
+Ultravox can be included in clone attempts from the gateway. If the upstream provider returns clone limits/quota/duplicate errors, the gateway should skip that provider and continue with the others when possible.
+
+## Best for
+
+- Expressive speech-to-speech agents
+- Broad voice catalog requirements
+- Workloads where Ultravox model behavior is preferred

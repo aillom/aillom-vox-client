@@ -1,77 +1,85 @@
 # Supported AI providers
 
-AillomVox is a **gateway**: you pick a `provider` in the WebSocket `config` handshake. The authoritative catalog (models, nested voices, TTS options for `aillomvox`) is returned by:
+AillomVox is a **voice AI gateway**. In the WebSocket `config` handshake, set `provider` to one of the realtime providers below. For the current catalog, always prefer the live endpoints:
 
-`GET https://vox.aillom.com/api/providers` (no API key required for the public catalog; pass `x-api-key` when using `workspace_id`).
+- `GET https://vox.aillom.com/api/providers` — providers, models and voice catalogs
+- `GET https://vox.aillom.com/api/pricing` — public USD/min rate card
 
 From the TypeScript SDK:
 
 ```typescript
 import { AillomVox } from 'aillom-vox-client';
 
-const catalog = await AillomVox.fetchProviders();
-console.log(catalog);
+const providers = await AillomVox.fetchProviders();
+const pricing = await AillomVox.fetchPricing();
 ```
 
-## Provider matrix (WebSocket `provider` field)
+## Provider matrix
 
-These ids match the **public playground** in the `aillom-vox` dashboard (`flow-src`).
+Current public production configuration:
 
-| `provider` | Product (gateway label) | Notes |
-| :--- | :--- | :--- |
-| `aillomvox` | AillomVox (unified) | Set `tts_engine` to choose the TTS stack (see below). LLM tier comes from your workspace / gateway config. |
-| `gemini` | Google Gemini Live | Multimodal / long-context oriented. |
-| `aws` | AWS Nova Sonic | Enterprise / AWS ecosystem. |
-| `qwen` | Alibaba Qwen Omni | Strong multilingual; check [limitations](PROVIDERS.md#provider-notes) for tools. |
-| `openai` | OpenAI GPT Realtime | Best for heavy tool-use / reasoning paths. |
-| `grok` | xAI Grok Voice | Distinct style; voices from xAI catalog. |
-| `ultravox` | Ultravox | STS stack with expressive audio. |
+| `provider` | Product | Model / stack | USD/min |
+| :--- | :--- | :--- | ---: |
+| `aillomvox` | AillomVox gateway | GPT-OSS 120B · Whisper · Inworld TTS-2 | **0.04** |
+| `aws` | AWS Nova | nova-2-sonic | **0.06** |
+| `gemini` | Gemini Live | gemini-3.1-flash-live-preview | **0.06** |
+| `qwen` | Qwen Omni | qwen3.5-omni-flash-realtime | **0.06** |
+| `grok` | xAI Grok Voice | grok-voice-think-fast-1.0 | **0.10** |
+| `openai` | OpenAI Realtime | gpt-realtime-mini | **0.10** |
+| `ultravox` | Ultravox | ultravox-70B | **0.10** |
 
-### Public list price (USD / billed minute)
-
-Same numbers as the [live marketing table](https://vox.aillom.com) (`providerPricing`). For programmatic access, the npm package exports **`VOX_PROVIDER_RATECARD`** from `aillom-vox-client/dist/pricing.js` (see `src/pricing.ts`). **Your invoice may differ** (credits, bundles, negotiated SKUs) — use the billing dashboard as the contract.
-
-| Product | `provider` | `tts_engine` (gateway only) | Tier | USD/min | Model / stack (site copy) |
-| :--- | :--- | :--- | :--- | ---: | :--- |
-| AillomVox | `aillomvox` | Standard lanes (`lmnt`, `rime`, `soniox`, `xai`, Cartesia Sonic-class lane, …) | Gateway | **0.03** | GPT-OSS 120B · Whisper · LMNT (default lane) |
-| AillomVox Max | `aillomvox` | **`cartesia`** (Cartesia Sonic-class path) | Gateway | **0.06** | Groq · Soniox · Cartesia |
-| Gemini | `gemini` | — | S2S | **0.06** | gemini-2.5-flash |
-| AWS Nova | `aws` | — | S2S | **0.06** | nova-2-sonic |
-| Qwen | `qwen` | — | S2S | **0.06** | qwen3.5-omni-flash-realtime |
-| OpenAI | `openai` | — | S2S | **0.10** | gpt-realtime-mini |
-| Grok | `grok` | — | S2S | **0.10** | grok-beta |
-| Ultravox | `ultravox` | — | Premium | **0.10** | ultravox-70B |
-
-### Aliases & billing labels
-
-Usage logs may show normalized or marketing ids (`aillomvoxmax`, `google`, etc.). The dashboard documents aliases; treat `GET /api/providers` plus your account’s enabled SKUs as source of truth for **pricing**.
+These are public list prices. Credits, negotiated SKUs, account settings and billing adjustments can differ; the billing dashboard is the contract.
 
 ## `aillomvox` + `tts_engine`
 
-When `provider` is `aillomvox`, send **`tts_engine`** in the first JSON message (same level as `voice`, `language`, …). The gateway loads the voice list for that engine from `GET /api/providers` → `aillomvox.tts_options`.
+When `provider` is `aillomvox`, send `tts_engine` in the first JSON config message. The live gateway currently exposes these TTS lanes under `aillomvox.tts_options`:
 
-| `tts_engine` | Role |
-| :--- | :--- |
-| **`lmnt`** | **Recommended default.** LMNT TTS voices (see `tts_options` in `GET /api/providers`). |
-| `cartesia` | Cartesia Sonic-class voices (premium track). |
-| `xai` | xAI TTS lane. |
-| `soniox` | Soniox. |
-| `rime` | Rime AI. |
+| `tts_engine` | Role | Public voice count at last verification |
+| :--- | :--- | ---: |
+| `inworld` | Inworld Realtime TTS-2 | 148 |
+| `xai` | xAI TTS / custom voices | 5 |
+| `lmnt` | LMNT TTS / custom voices | 62 |
+| `soniox` | Soniox realtime TTS | 12 |
+| `rime` | Rime AI voices | 117 |
+| `fish` | Fish Audio TTS / custom voices | 101 |
 
-Some older deployments still expose **`inworld`**; prefer **`lmnt`** for new integrations. Voice IDs are **not portable** across engines — always pair `tts_engine` with voices from `/api/providers` for that engine.
+Cartesia is intentionally disabled in the public client docs for now. Do not use `aillomvoxmax`; that SKU label is deprecated.
+
+Voice IDs are **not portable** across engines. Always pair `tts_engine` with a `voice` returned for that engine from `/api/providers`.
 
 Example handshake fragment:
 
 ```json
 {
   "type": "config",
-  "apikey": "av_…",
+  "apikey": "av_...",
   "provider": "aillomvox",
-  "tts_engine": "lmnt",
-  "voice": "lily",
+  "tts_engine": "inworld",
+  "voice": "Aanya",
+  "language": "en-US",
   "sample_rate": 16000,
-  "system_prompt": "You are a concise assistant for US English callers."
+  "system_prompt": "You are a concise assistant."
 }
+```
+
+## Voice cloning
+
+Voice clone is available through `POST /api/voices/clone` and the SDK helper `AillomVox.cloneVoice(...)`.
+
+Operational rule in production:
+
+- The free `$1.00` signup credit can be used for call testing.
+- Voice cloning is unlocked only after the user makes at least one paid top-up.
+- Clone requests may target enabled providers such as `lmnt`, `qwen`, `xai`, `ultravox`, `inworld`, and `fish`.
+- If a provider rejects cloning because of quota/limit/duplicate behavior, the gateway skips that provider and continues with the others when possible.
+
+```typescript
+await AillomVox.cloneVoice(audioBlob, apiKey, {
+  name: 'Support voice',
+  providers: ['lmnt', 'inworld', 'fish'],
+  language: 'pt-BR',
+  transcription: 'Texto exato falado no audio.',
+});
 ```
 
 ## SDK snippet
@@ -82,17 +90,17 @@ import { AillomVox } from 'aillom-vox-client';
 const client = new AillomVox({
   apiKey: process.env.AILLOMVOX_KEY!,
   provider: 'aillomvox',
-  ttsEngine: 'lmnt',
-  voice: 'lily',
+  ttsEngine: 'inworld',
+  voice: 'Aanya',
   language: 'en-US',
+  sampleRate: 16000,
   systemPrompt: 'You are a professional assistant.',
   firstMessage: 'Hello! How can I help you today?',
-  gatewayUrl: 'wss://vox.aillom.com/ws', // optional — this is already the default
 });
 
 client.on('transcript', (m) => console.log(m.role, m.text));
 client.on('playback_clear_buffer', () => {
-  /* stop scheduled TTS playback — user interrupted */
+  // Stop scheduled playback: user interrupted the assistant.
 });
 
 await client.connect();
@@ -102,11 +110,12 @@ await client.connect();
 
 | Topic | Detail |
 | :--- | :--- |
-| Qwen + tools | Realtime Qwen may not emit client `tool_call` events the same way as OpenAI/Gemini; design flows that tolerate “answer-only” behavior or pick another provider for strict tool pipelines. |
-| Voice lists | Prefer loading voices from `fetchProviders()` / dashboard rather than hardcoding; providers add voices over time. |
-| Rates | Use the [rate card](#public-list-price-usd--billed-minute) above + billing; list prices track `vox.aillom.com`. |
+| Live source of truth | Use `fetchProviders()` and `fetchPricing()` rather than hardcoding voices/prices. |
+| Qwen + tools | Realtime Qwen may not emit client `tool_call` events the same way as OpenAI/Gemini; design flows that tolerate answer-only behavior or pick another provider for strict tool pipelines. |
+| Cartesia | Disabled in the public docs/client defaults for now. |
+| Voice clone | Requires a paid top-up even if the account has signup test credit. |
 
-## Per-provider docs (deep dives)
+## Per-provider docs
 
 - [AillomVox / unified stack](providers/AILLOMVOX.md)
 - [OpenAI Realtime](providers/OPENAI.md)

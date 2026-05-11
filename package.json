@@ -43,10 +43,13 @@
         "low-latency",
         "voice-gateway",
         "sip-trunking",
-        "gpt-4o-realtime",
         "telephony",
         "ultravox",
-        "nova-sonic"
+        "nova-sonic",
+        "grok-voice",
+        "fish-audio",
+        "rime-ai",
+        "inworld-tts"
     ],
     "author": "Aillom Technologies <contato@aillom.com.br>",
     "license": "ISC",

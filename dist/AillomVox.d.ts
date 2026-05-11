@@ -1,4 +1,4 @@
-import { AillomVoxConfig, EventHandler, ProvidersCatalogOptions } from './types';
+import { AillomVoxConfig, CloneVoiceOptions, EventHandler, ProvidersCatalogOptions } from './types';
 /**
  * Browser or Node.js WebSocket client for the AillomVox voice gateway.
  *
@@ -35,9 +35,15 @@ export declare class AillomVox {
     private handleMessage;
     private emit;
     /**
-     * `GET /api/providers` — pricing, models, and nested voices (public; optional auth for workspace scoping).
+     * `GET /api/providers` — models and nested voices (public; optional auth for workspace scoping).
      */
     static fetchProviders(options?: ProvidersCatalogOptions): Promise<unknown>;
+    /**
+     * `GET /api/pricing` — public USD/min rate card from the live gateway.
+     */
+    static fetchPricing(options?: {
+        baseUrl?: string;
+    }): Promise<unknown>;
     /**
      * `GET /api/voices` — optional provider filter matches dashboard catalog keys.
      */
@@ -49,9 +55,5 @@ export declare class AillomVox {
     /**
      * Upload a short clean recording to create a cloned voice handle.
      */
-    static cloneVoice(clip: Blob, apiKey: string, options?: {
-        name?: string;
-        description?: string;
-        gatewayUrl?: string;
-    }): Promise<string>;
+    static cloneVoice(clip: Blob, apiKey: string, options?: CloneVoiceOptions): Promise<string>;
 }

@@ -1,239 +1,77 @@
 # Voice Catalog
 
-Prefer **`GET https://vox.aillom.com/api/providers`** for authoritative voice IDs — they depend on **`tts_engine`**.
+Do not hardcode voice tables unless you are building a fixed demo. The authoritative voice catalog is live:
 
-## AillomVox — LMNT (default `tts_engine`)
+```typescript
+import { AillomVox } from 'aillom-vox-client';
 
-The recommended default is **`tts_engine: "lmnt"`**. Use voice ids from the **`lmnt`** entry under `aillomvox.tts_options` in `/api/providers` (for example **`lily`** or **`cole`** in many deployments). These ids are **not** valid for other engines.
-
----
-
-## Appendix: legacy Inworld catalog (`tts_engine: inworld`)
-
-Some gateways still support **Inworld** when **`tts_engine`** is **`inworld`**. The tables below document that **legacy** name list (65 voices). Do **not** use these names with **`lmnt`** — use the `/api/providers` list for LMNT instead.
-
-**65 voices** verified via the Inworld TTS API. Each voice has a native language but supports multilingual synthesis across all 15 languages.
-
-## AillomVox Max (Cartesia Sonic 3)
-
-Hyper-realistic emotive voices using the `sonic-3-latest` model.
-For AillomVox Max, you can use any valid **Cartesia Voice ID** (e.g., `694f9389-aac1-45b6-b726-9d9369183238`) in the `voice` parameter. AillomVox Max supports 42 languages natively.
-
-### Portuguese Pick
-- **Brazilian PT**: Use Cartesia's standard Voice IDs designed for PT-BR natively context or hyper-natural dialogue.
-
----
-
-### English (25 voices)
-
-**Male (14)**
-
-| Voice | Style |
-| :--- | :--- |
-| **Edward** | Fast-talking, emphatic (default EN) |
-| **Dennis** | Smooth, calm, friendly |
-| **Alex** | Energetic, expressive |
-| **Craig** | Older British, refined |
-| **Mark** | Energetic, rapid delivery |
-| **Ronald** | Confident British, deep |
-| **Shaun** | Friendly, dynamic |
-| **Theodore** | Gravelly, time-worn |
-| **Timothy** | Lively, upbeat American |
-| **Carter** | Mature radio announcer |
-| **Blake** | Rich, intimate |
-| **Clive** | British, calm, cordial |
-| **Dominus** | Robotic, deep, menacing |
-| **Hades** | Commanding, gruff |
-
-**Female (11)**
-
-| Voice | Style |
-| :--- | :--- |
-| **Ashley** | Warm, natural |
-| **Deborah** | Gentle, elegant |
-| **Elizabeth** | Professional, narrations |
-| **Julia** | Quirky, high-pitched |
-| **Olivia** | Young British, upbeat |
-| **Priya** | Even-toned, Indian accent |
-| **Sarah** | Fast-talking, curious |
-| **Wendy** | Posh British |
-| **Luna** | Calm, relaxing |
-| **Hana** | Bright, expressive |
-| **Pixie** | High-pitched, childlike |
-
-### Portuguese (2)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Heitor** | Male | Composed, neutral (default PT) |
-| **Maitê** | Female | Middle-aged, professional |
-
-### Spanish (4)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Diego** | Male | Soothing, gentle (default ES) |
-| **Miguel** | Male | Calm, storytelling |
-| **Rafael** | Male | Deep, composed |
-| **Lupita** | Female | Vibrant, energetic |
-
-### French (4)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Alain** | Male | Deep, smooth |
-| **Mathieu** | Male | Nasal quality |
-| **Étienne** | Male | Calm, young adult |
-| **Hélène** | Female | Musical, graceful |
-
-### German (2)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Josef** | Male | Articulate, announcer |
-| **Johanna** | Female | Calm, low, smoky |
-
-### Italian (2)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Gianni** | Male | Deep, smooth, rapid |
-| **Orietta** | Female | Calm, soothing |
-
-### Chinese (4)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Yichen** | Male | Calm, flat |
-| **Xiaoyin** | Female | Youthful, sweet |
-| **Xinyi** | Female | Neutral, narrations |
-| **Jing** | Female | Energetic, fast |
-
-### Dutch (4)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Erik** | Male | Older, weathered |
-| **Lennart** | Male | Confident, calm |
-| **Katrien** | Female | Expressive |
-| **Lore** | Female | Clear, calm |
-
-### Japanese (2)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Satoshi** | Male | Dramatic, expressive |
-| **Asuka** | Female | Friendly, young |
-
-### Korean (4)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Hyunwoo** | Male | Young adult |
-| **Seojun** | Male | Deep, mature |
-| **Minji** | Female | Energetic, friendly |
-| **Yoona** | Female | Gentle, soothing |
-
-### Polish (2)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Szymon** | Male | Warm, friendly |
-| **Wojciech** | Male | Middle-aged |
-
-### Russian (4)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Dmitry** | Male | Deep, commanding |
-| **Nikolai** | Male | Deep, theatrical |
-| **Svetlana** | Female | Soft, high-pitched |
-| **Elena** | Female | Clear, smooth |
-
-### Hindi (2)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Manoj** | Male | Professional |
-| **Riya** | Female | Polished, approachable |
-
-### Hebrew (2)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Oren** | Male | Steady |
-| **Yael** | Female | Mid-range, narrations |
-
-### Arabic (2)
-
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **Omar** | Male | Bright, confident |
-| **Nour** | Female | Polished, friendly |
-
----
-
-## OpenAI Realtime
-
-| Voice | Style |
-| :--- | :--- |
-| **alloy** | Neutral, balanced |
-| **ash** | Warm, conversational |
-| **coral** | Clear, professional |
-| **echo** | Smooth, calm |
-| **sage** | Wise, measured |
-| **shimmer** | Bright, energetic |
-
----
-
-## Google Gemini
-
-| Voice | Style |
-| :--- | :--- |
-| **Puck** | Soft, higher pitch |
-| **Kore** | Soft, higher pitch |
-| **Charon** | Deep, confident |
-| **Fenrir** | Deep, confident |
-| **Aoede** | Confident, higher pitch |
-
----
-
-## AWS Bedrock (Nova Sonic)
-
-| Voice | Style |
-| :--- | :--- |
-| **matthew** | Male, neutral |
-| **ruth** | Female, professional |
-| **tiffany** | Female, warm |
-
----
-
-## Ultravox
-
-| Voice | Style |
-| :--- | :--- |
-| **Mark** | Male |
-| **Jessica** | Female |
-
----
-
-## Language Support
-
-### AillomVox Languages (15)
-
-```
-en, pt, es, fr, de, it, ja, zh, ko, hi, ar, ru, pl, nl, he
+const providers = await AillomVox.fetchProviders();
 ```
 
-### Language defaults (legacy Inworld appendix only)
+Raw endpoint:
 
-When using **`tts_engine: "inworld"`** (legacy), typical defaults were:
+```bash
+curl https://vox.aillom.com/api/providers
+```
 
-| Code | Language | Default Voice |
-| :--- | :--- | :--- |
-| `en-US` | English | Edward |
-| `pt-BR` | Portuguese (Brazil) | Heitor |
-| `es-ES` | Spanish | Diego |
-| All others | — | Edward |
+## Current public counts
 
-For **`lmnt`**, use **`GET /api/providers`** instead of this table.
+Last verified against production:
+
+| Scope | Count |
+| :--- | ---: |
+| Total public voices across provider catalog | 789 |
+| `aillomvox.tts_options.inworld` | 148 |
+| `aillomvox.tts_options.xai` | 5 |
+| `aillomvox.tts_options.lmnt` | 62 |
+| `aillomvox.tts_options.soniox` | 12 |
+| `aillomvox.tts_options.rime` | 117 |
+| `aillomvox.tts_options.fish` | 101 |
+| `gemini` | 30 |
+| `aws` | 4 |
+| `qwen` | 55 |
+| `openai` | 11 |
+| `grok` | 5 |
+| `ultravox` | 239 |
+
+Counts can change as providers add or remove voices.
+
+## Selecting a voice
+
+For `provider: "aillomvox"`, choose a TTS lane and then choose a voice from that lane:
+
+```json
+{
+  "provider": "aillomvox",
+  "tts_engine": "inworld",
+  "voice": "Aanya"
+}
+```
+
+Voice IDs are provider-specific. For example, an Inworld voice ID is not valid for LMNT/Fish/Rime unless that provider also returns the same ID.
+
+## Voice previews
+
+The public API can generate or proxy previews:
+
+```bash
+curl -L 'https://vox.aillom.com/api/voices/preview?provider=inworld&voice=Aanya' --output preview.wav
+curl -L 'https://vox.aillom.com/api/voices/preview?provider=fish&voice=8ef4a238714b45718ce04243307c57a7' --output preview.mp3
+```
+
+## Voice cloning
+
+Voice cloning is available through `AillomVox.cloneVoice(...)` or `POST /api/voices/clone`, but production requires at least one paid top-up. The free `$1.00` signup credit is for call testing.
+
+Recommended clone request:
+
+```typescript
+await AillomVox.cloneVoice(audioBlob, apiKey, {
+  name: 'Brand support voice',
+  providers: ['lmnt', 'inworld', 'fish'],
+  language: 'pt-BR',
+  transcription: 'Texto exato falado no audio.',
+});
+```
+
+Provider clone limits are handled server-side: if one provider reports quota/limit/duplicate errors, the gateway can continue with other enabled providers.

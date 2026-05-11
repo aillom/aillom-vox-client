@@ -3,9 +3,7 @@ import type { AillomVoxTtsEngineId } from './constants';
  * Known stable provider ids. The gateway may accept additional strings and normalizes aliases
  * (see product docs / `GET /api/providers`).
  */
-export type VoxProviderId = 'aillomvox'
-/** Premium Cartesia track (usage labels may show `aillomvoxmax`). */
- | 'aillomvoxmax' | 'aillomvoxplus' | 'aillomplus' | 'openai' | 'gemini' | 'aws' | 'qwen' | 'grok' | 'ultravox' | (string & {});
+export type VoxProviderId = 'aillomvox' | 'openai' | 'gemini' | 'aws' | 'qwen' | 'grok' | 'ultravox' | (string & {});
 export interface ClientTool {
     name: string;
     description: string;
@@ -96,4 +94,15 @@ export interface ProvidersCatalogOptions {
     /** When set, `x-api-key` must belong to that workspace (gateway returns 401/403 otherwise). */
     workspaceId?: string;
     apiKey?: string;
+}
+export interface CloneVoiceOptions {
+    name?: string;
+    description?: string;
+    gatewayUrl?: string;
+    /** Comma-separated internally by the SDK. Defaults to the server route defaults. */
+    providers?: string[];
+    /** BCP 47 locale, or `AUTO`. Helps providers that need language hints. */
+    language?: string;
+    /** Exact transcript of the audio sample; recommended for Inworld and Fish Audio. */
+    transcription?: string;
 }

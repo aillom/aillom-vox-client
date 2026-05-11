@@ -3,7 +3,7 @@
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org/)
 
-Official **browser + Node.js** SDK for [AillomVox](https://vox.aillom.com): one WebSocket to the gateway (`wss://vox.aillom.com/ws`), PCM16 streaming, transcripts, tools, and REST helpers for the public catalog (`GET /api/providers`).
+Official **browser + Node.js** SDK for [AillomVox](https://vox.aillom.com): one WebSocket to the gateway (`wss://vox.aillom.com/ws`), PCM16 streaming, transcripts, tools, and REST helpers for the public catalog (`GET /api/providers`) and pricing (`GET /api/pricing`).
 
 Companion server, dashboard, and adapter code ship from the Vox product monorepo; **this** repository is only the npm client surface.
 
@@ -42,7 +42,7 @@ Hosted docs: `https://vox.aillom.com/docs`
 
 - The canonical WebSocket endpoint is **`wss://vox.aillom.com/ws`**. If you still have `wss://wss.aillom.com/ws` (or `https://wss.aillom.com`), the SDK migrates the host automatically via `normalizeWebSocketUrl()` and `migrateLegacyGatewayUrl()` — you can drop the legacy host from config whenever you like.
 - `gatewayUrl` accepts either a WebSocket URL **or** an HTTPS origin; both are normalized.
-- New helpers: `AillomVox.fetchProviders()`, `AillomVox.fetchVoices()`, `sendHangup()`.
+- New helpers: `AillomVox.fetchProviders()`, `AillomVox.fetchPricing()`, `AillomVox.fetchVoices()`, `sendHangup()`.
 - Events: `playback_clear_buffer` (barge-in), `state`, `control`, and `raw` for advanced logging.
 - Config: `firstMessage`, `farewellMessage`, `ttsEngine` (for `provider: 'aillomvox'`), optional `model`.
 
@@ -56,8 +56,8 @@ import { AillomVox } from 'aillom-vox-client';
 const client = new AillomVox({
   apiKey: process.env.AILLOMVOX_KEY!,
   provider: 'aillomvox',
-  ttsEngine: 'lmnt',
-  voice: 'lily',
+  ttsEngine: 'inworld',
+  voice: 'Aanya',
   language: 'en-US',
   sampleRate: 16000,
   systemPrompt: 'You are a concise, professional assistant.',
@@ -81,14 +81,15 @@ await client.connect();
 import { AillomVox } from 'aillom-vox-client';
 
 const catalog = await AillomVox.fetchProviders();
-// Inspect JSON in the dashboard network tab, or log `catalog` in DevTools.
+const pricing = await AillomVox.fetchPricing();
+console.log({ catalog, pricing });
 ```
 
 ---
 
 ### List pricing (USD / minute)
 
-Published alongside the [marketing site](https://vox.aillom.com); full table in [docs/PROVIDERS.md](docs/PROVIDERS.md#public-list-price-usd--billed-minute). The SDK exports the same rows as data:
+Published alongside the [marketing site](https://vox.aillom.com); full table in [docs/PROVIDERS.md](docs/PROVIDERS.md). The SDK exports the same rows as data:
 
 ```typescript
 import { VOX_PROVIDER_RATECARD } from 'aillom-vox-client';
@@ -98,7 +99,24 @@ for (const row of VOX_PROVIDER_RATECARD) {
 }
 ```
 
-Invoices can differ (credits, negotiated SKUs). Use the product billing UI as the contract.
+The live endpoint is the preferred source for public list prices. Invoices can differ (credits, negotiated SKUs). Use the product billing UI as the contract.
+
+
+### Current public providers and prices
+
+Use `AillomVox.fetchPricing()` for the live table. Current public list prices:
+
+| Provider | Model / stack | USD/min |
+| :--- | :--- | ---: |
+| `aillomvox` | GPT-OSS 120B · Whisper · Inworld TTS-2 | **0.04** |
+| `aws` | nova-2-sonic | **0.06** |
+| `gemini` | gemini-3.1-flash-live-preview | **0.06** |
+| `qwen` | qwen3.5-omni-flash-realtime | **0.06** |
+| `grok` | grok-voice-think-fast-1.0 | **0.10** |
+| `openai` | gpt-realtime-mini | **0.10** |
+| `ultravox` | ultravox-70B | **0.10** |
+
+For `provider: 'aillomvox'`, current TTS engines are `inworld`, `xai`, `lmnt`, `soniox`, `rime`, and `fish`. Cartesia is disabled in the public client docs for now; `aillomvoxmax` is deprecated.
 
 ---
 
@@ -112,8 +130,8 @@ ws.onopen = () => {
     type: 'config',
     apikey: 'YOUR_API_KEY',
     provider: 'aillomvox',
-    tts_engine: 'lmnt',
-    voice: 'lily',
+    tts_engine: 'inworld',
+    voice: 'Aanya',
     language: 'en-US',
     sample_rate: 16000,
     system_prompt: 'You are a helpful assistant.',
@@ -145,7 +163,7 @@ See **[examples/README.md](examples/README.md)** for how to run the browser demo
 
 ## Voice clone (REST)
 
-`AillomVox.cloneVoice(blob, apiKey, { gatewayUrl })` posts to `/api/voices/clone` with `x-api-key`. The HTTP origin is derived from `gatewayUrl` the same way as the WebSocket URL.
+`AillomVox.cloneVoice(blob, apiKey, { gatewayUrl, providers, language, transcription })` posts to `/api/voices/clone` with `x-api-key`. Production voice cloning is unlocked after the user's first paid top-up; the free $1.00 signup credit is for call testing.
 
 ---
 

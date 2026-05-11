@@ -1,12 +1,13 @@
-# xAI Grok
+# xAI Grok Voice
 
-A witty, casual, and capable voice model from xAI (`grok-beta`).
+AillomVox currently exposes xAI Grok through `grok-voice-think-fast-1.0`.
 
 ## Configuration
 
 ```json
 {
   "provider": "grok",
+  "voice": "ara",
   "system_prompt": "You are a helpful assistant.",
   "sample_rate": 16000
 }
@@ -14,12 +15,16 @@ A witty, casual, and capable voice model from xAI (`grok-beta`).
 
 ## Voices
 
-Model-dependent. Voice selection depends on the underlying model version.
+Use the live catalog:
 
-## Features
-- **Casual Tone**: Designed to be less robotic and more conversational ("witty").
-- **Native 16kHz**: Matches standard VoIP/WebRTC wideband perfectly.
+```typescript
+const voices = await AillomVox.fetchVoices({ provider: 'grok' });
+```
 
-## Best For
-- **Entertainment/Casual**: Chatbots, companions.
-- **News/Twitter**: Real-time information (via RAG/WebSearch tools).
+Current public catalog count: 5 voices.
+
+## Best for
+
+- Conversational voice agents
+- xAI/Grok-specific tone and model behavior
+- Flows that benefit from the Grok voice stack

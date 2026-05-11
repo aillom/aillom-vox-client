@@ -41,5 +41,5 @@ By default it imports the SDK from `../src` for development. In your app, use `i
 ## Protocol tips
 
 - First message after connect must be JSON **`type: "config"`** with `apikey`, `provider`, `sample_rate`, etc. See [docs/PROTOCOL.md](../docs/PROTOCOL.md).
-- For `provider: "aillomvox"`, set **`tts_engine`** (default **`lmnt`** in this SDK — LMNT voices) to match the **`voice`** id from **`GET /api/providers`** → `tts_options`.
+- For `provider: "aillomvox"`, set **`tts_engine`** (default **`inworld`** in this SDK — use the live voice catalog) to match the **`voice`** id from **`GET /api/providers`** → `tts_options`.
 - On **`playback_clear_buffer`**, stop any queued / scheduled output audio immediately (user interrupted the assistant).

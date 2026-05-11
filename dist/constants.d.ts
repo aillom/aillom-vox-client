@@ -15,5 +15,5 @@ export type AillomVoxPublicProviderId = (typeof AILLOMVOX_PUBLIC_PROVIDERS)[numb
  * When `provider === "aillomvox"`, the gateway selects a TTS stack via `tts_engine`
  * (see `GET /api/providers` → `aillomvox.tts_options`).
  */
-export declare const AILLOMVOX_TTS_ENGINES: readonly ["lmnt", "cartesia", "xai", "soniox", "rime"];
+export declare const AILLOMVOX_TTS_ENGINES: readonly ["inworld", "xai", "lmnt", "soniox", "rime", "fish"];
 export type AillomVoxTtsEngineId = (typeof AILLOMVOX_TTS_ENGINES)[number];

@@ -29,11 +29,12 @@ export type AillomVoxPublicProviderId = (typeof AILLOMVOX_PUBLIC_PROVIDERS)[numb
  * (see `GET /api/providers` → `aillomvox.tts_options`).
  */
 export const AILLOMVOX_TTS_ENGINES = [
-    'lmnt',
-    'cartesia',
+    'inworld',
     'xai',
+    'lmnt',
     'soniox',
     'rime',
+    'fish',
 ] as const;
 
 export type AillomVoxTtsEngineId = (typeof AILLOMVOX_TTS_ENGINES)[number];

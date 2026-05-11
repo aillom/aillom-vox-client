@@ -1,6 +1,6 @@
-# Google Gemini (Multimodal)
+# Google Gemini Live
 
-Leverages `gemini-2.5-flash-native-audio-preview-12-2025` for massive context and multimodal capabilities.
+AillomVox currently exposes Gemini through `gemini-3.1-flash-live-preview`.
 
 ## Configuration
 
@@ -15,19 +15,16 @@ Leverages `gemini-2.5-flash-native-audio-preview-12-2025` for massive context an
 
 ## Voices
 
-| Voice | Style |
-| :--- | :--- |
-| **Puck** | Soft, higher pitch |
-| **Kore** | Soft, higher pitch |
-| **Charon** | Deep, confident |
-| **Fenrir** | Deep, confident |
-| **Aoede** | Confident, higher pitch |
+Use the live catalog:
 
-## Features
-- **Large Context**: Can process huge system prompts or conversation history.
-- **Multimodal**: Can technically process images if sent (though SDK focuses on Audio).
-- **Tool Use**: Robust function calling.
+```typescript
+const voices = await AillomVox.fetchVoices({ provider: 'gemini' });
+```
 
-## Best For
-- **Long Context**: Analyzing documents or long previous conversations.
-- **Complex Instructions**: Following very detailed, multi-step system prompts.
+Current public catalog count: 30 voices.
+
+## Best for
+
+- Long-context instructions
+- Multilingual and multimodal-oriented flows
+- Tool-capable realtime sessions where Gemini behavior fits your use case

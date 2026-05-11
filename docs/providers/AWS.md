@@ -1,13 +1,13 @@
-# AWS Bedrock (Nova Sonic)
+# AWS Nova Sonic
 
-Enterprise-grade Speech-to-Speech using Amazon's latest **Nova Sonic** model (`amazon.nova-2-sonic-v1:0`).
+AillomVox currently exposes AWS Nova through `nova-2-sonic`.
 
 ## Configuration
 
 ```json
 {
   "provider": "aws",
-  "voice": "matthew",
+  "voice": "camila",
   "system_prompt": "You are a helpful assistant.",
   "sample_rate": 16000
 }
@@ -15,18 +15,16 @@ Enterprise-grade Speech-to-Speech using Amazon's latest **Nova Sonic** model (`a
 
 ## Voices
 
-| Voice | Gender | Style |
-| :--- | :--- | :--- |
-| **matthew** | Male | Neutral, professional |
-| **ruth** | Female | Professional, clear |
-| **tiffany** | Female | Warm, friendly |
+Use the live catalog:
 
-## Features
-- **Low Latency**: Faster than previous Polly+Bedrock chains.
-- **Reliability**: Highest uptime guarantee.
-- **Security**: Data privacy compliance (HIPAA, GDPR options available via AWS config).
-- **Tool Use**: Full support for function calling.
+```typescript
+const voices = await AillomVox.fetchVoices({ provider: 'aws' });
+```
 
-## Best For
-- **Enterprise**: Banking, healthcare, corporate environments.
-- **Stability**: When 99.99% uptime is required.
+Current public catalog count: 4 voices.
+
+## Best for
+
+- AWS-oriented enterprise environments
+- Stable speech-to-speech sessions
+- Tool-capable workflows where AWS behavior is preferred

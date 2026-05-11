@@ -26,9 +26,10 @@ exports.AILLOMVOX_PUBLIC_PROVIDERS = [
  * (see `GET /api/providers` → `aillomvox.tts_options`).
  */
 exports.AILLOMVOX_TTS_ENGINES = [
-    'lmnt',
-    'cartesia',
+    'inworld',
     'xai',
+    'lmnt',
     'soniox',
     'rime',
+    'fish',
 ];

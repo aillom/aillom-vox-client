@@ -116,7 +116,7 @@ class AillomVox {
             type: 'config',
             apikey: this.config.apiKey,
             provider: (this.config.provider ?? 'aillomvox').toLowerCase(),
-            voice: this.config.voice ?? 'lily',
+            voice: this.config.voice ?? 'Aanya',
             language: this.config.language ?? 'en-US',
             sample_rate: this.config.sampleRate ?? 16000,
             tools: this.config.tools ?? [],
@@ -141,7 +141,7 @@ class AillomVox {
         }
         const provider = String(payload.provider);
         if (provider === 'aillomvox') {
-            payload.tts_engine = this.config.ttsEngine ?? 'lmnt';
+            payload.tts_engine = this.config.ttsEngine ?? 'inworld';
         }
         if (this.config.debug) {
             const redacted = { ...payload, apikey: '[REDACTED]' };
@@ -207,7 +207,7 @@ class AillomVox {
             handler(data);
     }
     /**
-     * `GET /api/providers` — pricing, models, and nested voices (public; optional auth for workspace scoping).
+     * `GET /api/providers` — models and nested voices (public; optional auth for workspace scoping).
      */
     static async fetchProviders(options) {
         const origin = options?.baseUrl?.startsWith('wss://') || options?.baseUrl?.startsWith('ws://')
@@ -224,6 +224,21 @@ class AillomVox {
         if (!res.ok) {
             const body = await res.text();
             throw new Error(`fetchProviders failed (${res.status}): ${body}`);
+        }
+        return res.json();
+    }
+    /**
+     * `GET /api/pricing` — public USD/min rate card from the live gateway.
+     */
+    static async fetchPricing(options) {
+        const origin = options?.baseUrl?.startsWith('wss://') || options?.baseUrl?.startsWith('ws://')
+            ? (0, gateway_url_1.httpOriginFromGatewayUrl)(options.baseUrl)
+            : options?.baseUrl?.replace(/\/?$/, '') || constants_1.AILLOMVOX_DEFAULT_HTTP_ORIGIN;
+        const url = new URL('/api/pricing', origin.endsWith('/') ? origin : `${origin}/`);
+        const res = await fetch(url.toString());
+        if (!res.ok) {
+            const body = await res.text();
+            throw new Error(`fetchPricing failed (${res.status}): ${body}`);
         }
         return res.json();
     }
@@ -258,6 +273,12 @@ class AillomVox {
             formData.append('name', options.name);
         if (options.description)
             formData.append('description', options.description);
+        if (options.providers?.length)
+            formData.append('providers', options.providers.join(','));
+        if (options.language)
+            formData.append('language', options.language);
+        if (options.transcription)
+            formData.append('transcription', options.transcription);
         const response = await fetch(`${origin.replace(/\/?$/, '')}/api/voices/clone`, {
             method: 'POST',
             headers: {

@@ -65,8 +65,14 @@ class AillomVox {
                         {
                             name: 'Get Providers',
                             value: 'getProviders',
-                            description: 'Returns the list of AI providers and pricing',
+                            description: 'Returns providers, models, and nested voice catalogs',
                             action: 'Get providers',
+                        },
+                        {
+                            name: 'Get Pricing',
+                            value: 'getPricing',
+                            description: 'Returns the public USD/min rate card',
+                            action: 'Get pricing',
                         },
                     ],
                     default: 'getVoices',
@@ -119,16 +125,52 @@ class AillomVox {
                             value: 'aillomvox',
                         },
                         {
-                            name: 'ElevenLabs',
-                            value: 'elevenlabs',
+                            name: 'AWS Nova',
+                            value: 'aws',
                         },
                         {
-                            name: 'PlayHT',
-                            value: 'playht',
+                            name: 'Fish Audio',
+                            value: 'fish',
                         },
                         {
-                            name: 'Azure',
-                            value: 'azure',
+                            name: 'Gemini',
+                            value: 'gemini',
+                        },
+                        {
+                            name: 'Grok',
+                            value: 'grok',
+                        },
+                        {
+                            name: 'Inworld',
+                            value: 'inworld',
+                        },
+                        {
+                            name: 'LMNT',
+                            value: 'lmnt',
+                        },
+                        {
+                            name: 'OpenAI',
+                            value: 'openai',
+                        },
+                        {
+                            name: 'Qwen',
+                            value: 'qwen',
+                        },
+                        {
+                            name: 'Rime',
+                            value: 'rime',
+                        },
+                        {
+                            name: 'Soniox',
+                            value: 'soniox',
+                        },
+                        {
+                            name: 'Ultravox',
+                            value: 'ultravox',
+                        },
+                        {
+                            name: 'xAI',
+                            value: 'xai',
                         },
                     ],
                     default: 'aillomvox',
@@ -184,6 +226,14 @@ class AillomVox {
                         const response = await this.helpers.requestWithAuthentication.call(this, 'aillomVoxApi', {
                             method: 'GET',
                             uri: '/api/providers',
+                            json: true,
+                        });
+                        returnData.push(response);
+                    }
+                    else if (operation === 'getPricing') {
+                        const response = await this.helpers.requestWithAuthentication.call(this, 'aillomVoxApi', {
+                            method: 'GET',
+                            uri: '/api/pricing',
                             json: true,
                         });
                         returnData.push(response);
