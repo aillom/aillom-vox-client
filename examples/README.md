@@ -22,13 +22,25 @@ Then open e.g. `http://localhost:3333/01-basic/` in your browser.
 
 This is the easiest end-to-end test for people installing from npm:
 
-```bash
-cd examples/npm-quickstart
+Windows PowerShell:
+
+```powershell
+git clone https://github.com/aillom/aillom-vox-client.git
+cd aillom-vox-client\examples\npm-quickstart
 npm install
 npm run dev
 ```
 
-Open the Vite URL in your browser.
+Linux/macOS:
+
+```bash
+git clone https://github.com/aillom/aillom-vox-client.git
+cd aillom-vox-client/examples/npm-quickstart
+npm install
+npm run dev
+```
+
+Open the Vite URL in your browser. Full Windows, Ubuntu/Debian and macOS setup steps are in [npm-quickstart/README.md](npm-quickstart/README.md).
 
 ### Run the TypeScript sample
 

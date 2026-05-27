@@ -54,16 +54,46 @@ Hosted docs: `https://vox.aillom.com/docs`
 
 ### Test the published npm package
 
-Full browser test with UI:
+Full browser test with UI.
+
+Windows PowerShell:
+
+```powershell
+winget install --id OpenJS.NodeJS.LTS -e
+winget install --id Git.Git -e
+git clone https://github.com/aillom/aillom-vox-client.git
+cd aillom-vox-client\examples\npm-quickstart
+npm install
+npm run dev
+```
+
+Ubuntu / Debian:
 
 ```bash
+sudo apt update
+sudo apt install -y git curl ca-certificates
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+nvm install --lts
+nvm use --lts
 git clone https://github.com/aillom/aillom-vox-client.git
 cd aillom-vox-client/examples/npm-quickstart
 npm install
 npm run dev
 ```
 
-Open the Vite URL, paste your `av_...` key, click **Carregar vozes**, then **Iniciar chamada**.
+macOS:
+
+```bash
+brew install node git
+git clone https://github.com/aillom/aillom-vox-client.git
+cd aillom-vox-client/examples/npm-quickstart
+npm install
+npm run dev
+```
+
+Open the Vite URL, paste your `av_...` key, click **Carregar vozes**, then **Iniciar chamada**. Full setup and troubleshooting steps are in [docs/NPM_QUICKSTART.md](docs/NPM_QUICKSTART.md).
 
 Terminal smoke test:
 
