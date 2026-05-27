@@ -8,7 +8,7 @@ Common issues and how to resolve them when using AillomVox.
 
 ### `401 Unauthorized` / `error: unauthorized`
 - **Cause**: API Key is missing, invalid, or expired.
-- **Fix**: Check that you're sending `apikey` in your config handshake. Ensure you are copying the key exactly as provided in your dashboard.
+- **Fix**: In Node.js, send `x-api-key` during the WebSocket upgrade (the SDK does this by default). In browsers, send `apikey` in the first config handshake. Ensure you are copying the key exactly as provided in your dashboard.
 
 ### `error: insufficient_balance`
 - **Cause**: Your account balance is $0.00 or below.
@@ -71,7 +71,7 @@ Common issues and how to resolve them when using AillomVox.
 
 ### Tools Not Triggering
 - **Cause**: Vague tool descriptions or wrong provider.
-- **Fix**: Use clear, specific descriptions. Note: Qwen does not support tools — use AillomVox, OpenAI, Gemini, or AWS.
+- **Fix**: Use clear, specific descriptions. Realtime Qwen can be answer-only in some flows; use AillomVox, OpenAI, Gemini, or AWS when strict client tool execution is mandatory.
 
 ---
 
@@ -79,7 +79,7 @@ Common issues and how to resolve them when using AillomVox.
 
 ### `max_duration_reached`
 - **Cause**: Session exceeded the `max_duration` limit.
-- **Fix**: Increase `max_duration` (up to 3600) or handle the farewell message gracefully.
+- **Fix**: Increase `max_duration` (up to 7200) or handle the farewell message gracefully.
 
 ### Multiple Connections Rejected
 - **Cause**: Exceeded concurrent connection limit (3 per user, 2 per API key).

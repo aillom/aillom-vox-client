@@ -1,6 +1,6 @@
 # AWS Nova Sonic
 
-AillomVox currently exposes AWS Nova through `nova-2-sonic`.
+AillomVox currently exposes AWS Nova through `amazon.nova-2-sonic-v1:0`.
 
 ## Configuration
 
@@ -21,7 +21,7 @@ Use the live catalog:
 const voices = await AillomVox.fetchVoices({ provider: 'aws' });
 ```
 
-Current public catalog count: 4 voices.
+Current public catalog count: 16 voices.
 
 ## Best for
 

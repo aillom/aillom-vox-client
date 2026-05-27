@@ -8,7 +8,7 @@ import { AillomVox, normalizeWebSocketUrl } from '../src';
 import type { ToolCallEvent } from '../src';
 
 async function demoCatalog() {
-    const catalog = await AillomVox.fetchProviders();
+    const catalog = await AillomVox.fetchProviders({ includeVoices: false });
     console.log('Provider catalog keys:', Object.keys(catalog as object));
 }
 

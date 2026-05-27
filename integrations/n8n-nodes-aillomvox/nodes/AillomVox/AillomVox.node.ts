@@ -113,7 +113,7 @@ export class AillomVox implements INodeType {
             //         Fields: getVoices
             // ----------------------------------
             {
-                displayName: 'Provider (Optional)',
+                displayName: 'Provider',
                 name: 'provider',
                 type: 'options',
                 displayOptions: {
@@ -180,8 +180,83 @@ export class AillomVox implements INodeType {
                         value: 'xai',
                     },
                 ],
-                default: 'aillomvox',
-                description: 'Filter voices by specific provider',
+                default: 'inworld',
+                description: 'Provider or AillomVox TTS engine to list voices from',
+            },
+            {
+                displayName: 'Search',
+                name: 'q',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: [
+                            'info',
+                        ],
+                        operation: [
+                            'getVoices',
+                        ],
+                    },
+                },
+                description: 'Optional voice search query',
+            },
+            {
+                displayName: 'Voice Scope',
+                name: 'scope',
+                type: 'options',
+                options: [
+                    {
+                        name: 'All',
+                        value: '',
+                    },
+                    {
+                        name: 'Workspace Clones',
+                        value: 'clone',
+                    },
+                ],
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: [
+                            'info',
+                        ],
+                        operation: [
+                            'getVoices',
+                        ],
+                    },
+                },
+                description: 'Limit results to all voices or workspace-owned cloned voices',
+            },
+            {
+                displayName: 'Include Voices',
+                name: 'includeVoices',
+                type: 'boolean',
+                default: false,
+                displayOptions: {
+                    show: {
+                        resource: [
+                            'info',
+                        ],
+                        operation: [
+                            'getProviders',
+                        ],
+                    },
+                },
+                description: 'Whether to include nested voice catalogs in the providers response. Can be large.',
+            },
+            {
+                displayName: 'Workspace ID',
+                name: 'workspaceId',
+                type: 'string',
+                default: '',
+                displayOptions: {
+                    show: {
+                        resource: [
+                            'info',
+                        ],
+                    },
+                },
+                description: 'Optional workspace scope. The API key must belong to this workspace.',
             },
 
             // ----------------------------------
@@ -213,36 +288,59 @@ export class AillomVox implements INodeType {
         const returnData: IDataObject[] = [];
         const resource = this.getNodeParameter('resource', 0) as string;
         const operation = this.getNodeParameter('operation', 0) as string;
+        const credentials = await this.getCredentials('aillomVoxApi');
+        const baseUrl = String(credentials.baseUrl || 'https://vox.aillom.com').replace(/\/+$/, '');
 
         for (let i = 0; i < items.length; i++) {
             try {
                 if (resource === 'info') {
                     if (operation === 'getVoices') {
                         const provider = this.getNodeParameter('provider', i) as string;
+                        const workspaceId = this.getNodeParameter('workspaceId', i, '') as string;
+                        const q = this.getNodeParameter('q', i, '') as string;
+                        const scope = this.getNodeParameter('scope', i, '') as string;
                         const qs: IDataObject = {};
                         if (provider) {
                             qs.provider = provider;
                         }
+                        if (workspaceId) {
+                            qs.workspace_id = workspaceId;
+                        }
+                        if (q) {
+                            qs.q = q;
+                        }
+                        if (scope) {
+                            qs.scope = scope;
+                        }
 
                         const response = await this.helpers.requestWithAuthentication.call(this, 'aillomVoxApi', {
                             method: 'GET',
-                            uri: '/api/voices',
+                            uri: `${baseUrl}/api/voices`,
                             qs,
                             json: true,
                         });
 
                         returnData.push(response as IDataObject);
                     } else if (operation === 'getProviders') {
+                        const includeVoices = this.getNodeParameter('includeVoices', i, false) as boolean;
+                        const workspaceId = this.getNodeParameter('workspaceId', i, '') as string;
+                        const qs: IDataObject = {
+                            include_voices: includeVoices,
+                        };
+                        if (workspaceId) {
+                            qs.workspace_id = workspaceId;
+                        }
                         const response = await this.helpers.requestWithAuthentication.call(this, 'aillomVoxApi', {
                             method: 'GET',
-                            uri: '/api/providers',
+                            uri: `${baseUrl}/api/providers`,
+                            qs,
                             json: true,
                         });
                         returnData.push(response as IDataObject);
                     } else if (operation === 'getPricing') {
                         const response = await this.helpers.requestWithAuthentication.call(this, 'aillomVoxApi', {
                             method: 'GET',
-                            uri: '/api/pricing',
+                            uri: `${baseUrl}/api/pricing`,
                             json: true,
                         });
                         returnData.push(response as IDataObject);
@@ -253,7 +351,7 @@ export class AillomVox implements INodeType {
 
                         const response = await this.helpers.requestWithAuthentication.call(this, 'aillomVoxApi', {
                             method: 'GET',
-                            uri: `/api/recording/${recordingId}`,
+                            uri: `${baseUrl}/api/recording/${recordingId}`,
                             json: true,
                         });
 

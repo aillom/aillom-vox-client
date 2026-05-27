@@ -1,14 +1,15 @@
 {
     "name": "aillom-vox-client",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "Enterprise-Grade Voice AI SDK for Speech-to-Speech, Audio-to-Audio, and Realtime Multimodal applications.",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
         "build": "tsc",
         "dev": "tsc --watch",
+        "typecheck": "tsc --noEmit",
         "prepack": "npm run build",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "npm run typecheck"
     },
     "files": [
         "dist",

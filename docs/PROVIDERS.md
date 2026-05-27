@@ -10,23 +10,23 @@ From the TypeScript SDK:
 ```typescript
 import { AillomVox } from 'aillom-vox-client';
 
-const providers = await AillomVox.fetchProviders();
+const providers = await AillomVox.fetchProviders({ includeVoices: false });
 const pricing = await AillomVox.fetchPricing();
 ```
 
 ## Provider matrix
 
-Current public production configuration:
+Current public production configuration, verified against `GET /api/providers?include_voices=false` on 2026-05-27:
 
 | `provider` | Product | Model / stack | USD/min |
 | :--- | :--- | :--- | ---: |
-| `aillomvox` | AillomVox gateway | GPT-OSS 120B · Whisper · Inworld TTS-2 | **0.04** |
-| `aws` | AWS Nova | nova-2-sonic | **0.06** |
+| `aillomvox` | AillomVox gateway | llama-3.3-70b-versatile + selectable TTS | **0.04** |
+| `aws` | AWS Nova | amazon.nova-2-sonic-v1:0 | **0.06** |
 | `gemini` | Gemini Live | gemini-3.1-flash-live-preview | **0.06** |
 | `qwen` | Qwen Omni | qwen3.5-omni-flash-realtime | **0.06** |
 | `grok` | xAI Grok Voice | grok-voice-think-fast-1.0 | **0.10** |
-| `openai` | OpenAI Realtime | gpt-realtime-mini | **0.10** |
-| `ultravox` | Ultravox | ultravox-70B | **0.10** |
+| `openai` | OpenAI Realtime | gpt-4o-mini-realtime-preview | **0.10** |
+| `ultravox` | Ultravox | fixie-ai/ultravox-v0.7 | **0.10** |
 
 These are public list prices. Credits, negotiated SKUs, account settings and billing adjustments can differ; the billing dashboard is the contract.
 
@@ -37,11 +37,11 @@ When `provider` is `aillomvox`, send `tts_engine` in the first JSON config messa
 | `tts_engine` | Role | Public voice count at last verification |
 | :--- | :--- | ---: |
 | `inworld` | Inworld Realtime TTS-2 | 148 |
-| `xai` | xAI TTS / custom voices | 5 |
-| `lmnt` | LMNT TTS / custom voices | 62 |
-| `soniox` | Soniox realtime TTS | 12 |
+| `xai` | xAI TTS / custom voices | 71 |
+| `lmnt` | LMNT TTS / custom voices | 8 |
+| `soniox` | Soniox realtime TTS | 28 |
 | `rime` | Rime AI voices | 117 |
-| `fish` | Fish Audio TTS / custom voices | 101 |
+| `fish` | Fish Audio TTS / custom voices | 2988 |
 
 Cartesia is intentionally disabled in the public client docs for now. Do not use `aillomvoxmax`; that SKU label is deprecated.
 
@@ -76,6 +76,7 @@ Operational rule in production:
 ```typescript
 await AillomVox.cloneVoice(audioBlob, apiKey, {
   name: 'Support voice',
+  workspaceId: 'workspace-id',
   providers: ['lmnt', 'inworld', 'fish'],
   language: 'pt-BR',
   transcription: 'Texto exato falado no audio.',

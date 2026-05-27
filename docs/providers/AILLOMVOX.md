@@ -6,9 +6,9 @@ The default gateway provider. It combines STT, LLM, TTS, recording, tools and fa
 
 | Component | Current stack |
 | :--- | :--- |
-| STT | Whisper / realtime STT lane managed by gateway |
-| LLM | GPT-OSS 120B gateway lane |
-| TTS | Inworld TTS-2 by default in production pricing copy; selectable with `tts_engine` |
+| STT | Soniox realtime STT lane managed by gateway |
+| LLM | Groq Llama 3.3 70B gateway lane |
+| TTS | Selectable with `tts_engine`; SDK default is `inworld` |
 | List price | `$0.04/min` |
 
 ## TTS engines
@@ -41,7 +41,7 @@ Voice IDs are not portable across `tts_engine` values. Use `fetchProviders()` fo
 
 ## Voice clone
 
-Voice clone is supported through enabled providers (`lmnt`, `xai`, `ultravox`, `inworld`, `fish`, and others configured server-side). Production requires at least one paid top-up; the free `$1.00` signup credit is for call testing.
+Voice clone is supported through enabled providers (`lmnt`, `qwen`, `xai`, `ultravox`, `inworld`, `fish`, and others configured server-side). Production requires at least one paid top-up; the free `$1.00` signup credit is for call testing.
 
 ## Best for
 

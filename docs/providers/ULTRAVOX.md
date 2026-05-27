@@ -1,6 +1,6 @@
 # Ultravox
 
-AillomVox currently exposes Ultravox as `ultravox-70B`.
+AillomVox currently exposes Ultravox as `fixie-ai/ultravox-v0.7` in `GET /api/providers`.
 
 ## Configuration
 
@@ -22,7 +22,7 @@ Use the live catalog:
 const voices = await AillomVox.fetchVoices({ provider: 'ultravox' });
 ```
 
-Current public catalog count: 239 voices.
+Current public catalog count: 238 voices.
 
 ## Voice clone
 

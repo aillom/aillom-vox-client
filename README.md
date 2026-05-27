@@ -19,7 +19,7 @@ npm install aillom-vox-client
 
 - **API keys are secrets.** Never commit real keys, never paste them into public tickets or client-side source that ships to browsers unless you accept that end users can extract them.
 - **Browser apps:** a key embedded in frontend JavaScript or Web apps is visible in DevTools and bundled files. Safer patterns: your **backend** exchanges a session cookie or a **short-lived token** for voice access, or proxies the WebSocket with the real key on the server.
-- **Do not put `apikey` in the WebSocket URL** (e.g. `wss://…/ws?apiKey=…`). That string is prone to leaking via server logs, reverse proxies, and referrer headers. Pass the key only in the first JSON **`config`** message (what this SDK does by default). If you pass a URL with sensitive query parameters, `normalizeWebSocketUrl()` logs a **console warning**.
+- **Do not put `apikey` in the WebSocket URL** (e.g. `wss://.../ws?apiKey=...`). That string is prone to leaking via server logs, reverse proxies, and referrer headers. The SDK uses `x-api-key` headers in Node.js and falls back to the first JSON **`config.apikey`** field in browsers, where custom WebSocket headers are unavailable.
 - **`debug: true`:** logs structured config with `apikey` **redacted**, but may still log other inbound JSON; transcripts can contain **PII**. Keep `debug` off in production.
 - **TLS:** use **`wss://`** against production (`wss://vox.aillom.com/ws`), not `ws://`, except on trusted local networks.
 - **User data:** voice audio and transcripts flow through the gateway; document your own privacy policy and minimize what you log on the client.
@@ -38,13 +38,14 @@ Hosted docs: `https://vox.aillom.com/docs`
 
 ---
 
-## What changed in v2
+## What changed in v2.1
 
 - The canonical WebSocket endpoint is **`wss://vox.aillom.com/ws`**. If you still have `wss://wss.aillom.com/ws` (or `https://wss.aillom.com`), the SDK migrates the host automatically via `normalizeWebSocketUrl()` and `migrateLegacyGatewayUrl()` — you can drop the legacy host from config whenever you like.
 - `gatewayUrl` accepts either a WebSocket URL **or** an HTTPS origin; both are normalized.
-- New helpers: `AillomVox.fetchProviders()`, `AillomVox.fetchPricing()`, `AillomVox.fetchVoices()`, `sendHangup()`.
+- Auth now matches the live gateway: Node.js uses `x-api-key`; browser sessions keep using `config.apikey`.
+- New helpers: `AillomVox.fetchProviders({ includeVoices })`, `AillomVox.fetchPricing()`, `AillomVox.fetchVoices()`, `AillomVox.fetchVoicePreview()`, `AillomVox.deleteVoice()`, `AillomVox.cloneVoiceDetailed()`, `sendHangup()`, `sendText()`, and `sendImage()`.
 - Events: `playback_clear_buffer` (barge-in), `state`, `control`, and `raw` for advanced logging.
-- Config: `firstMessage`, `farewellMessage`, `ttsEngine` (for `provider: 'aillomvox'`), optional `model`.
+- Config: `workspaceId`, `firstMessage`, `farewellMessage`, `ttsEngine` (for `provider: 'aillomvox'`), and advanced timing knobs. Per-session `model` overrides are ignored by the current gateway; use `fetchProviders()` to inspect server defaults.
 
 ---
 
@@ -80,7 +81,7 @@ await client.connect();
 ```typescript
 import { AillomVox } from 'aillom-vox-client';
 
-const catalog = await AillomVox.fetchProviders();
+const catalog = await AillomVox.fetchProviders({ includeVoices: false });
 const pricing = await AillomVox.fetchPricing();
 console.log({ catalog, pricing });
 ```
@@ -108,7 +109,7 @@ Use `AillomVox.fetchPricing()` for the live table. Current public list prices:
 
 | Provider | Model / stack | USD/min |
 | :--- | :--- | ---: |
-| `aillomvox` | GPT-OSS 120B · Whisper · Inworld TTS-2 | **0.04** |
+| `aillomvox` | Soniox STT · Groq Llama 3.3 70B · selectable TTS | **0.04** |
 | `aws` | nova-2-sonic | **0.06** |
 | `gemini` | gemini-3.1-flash-live-preview | **0.06** |
 | `qwen` | qwen3.5-omni-flash-realtime | **0.06** |
@@ -163,7 +164,7 @@ See **[examples/README.md](examples/README.md)** for how to run the browser demo
 
 ## Voice clone (REST)
 
-`AillomVox.cloneVoice(blob, apiKey, { gatewayUrl, providers, language, transcription })` posts to `/api/voices/clone` with `x-api-key`. Production voice cloning is unlocked after the user's first paid top-up; the free $1.00 signup credit is for call testing.
+`AillomVox.cloneVoice(blob, apiKey, { gatewayUrl, workspaceId, providers, language, transcription })` posts to `/api/voices/clone` with `x-api-key` and returns the primary `voice_id`. Use `cloneVoiceDetailed()` when you need the per-provider clone result, and `deleteVoice()` to remove a workspace-owned clone. Production voice cloning is unlocked after the user's first paid top-up; the free $1.00 signup credit is for call testing.
 
 ---
 

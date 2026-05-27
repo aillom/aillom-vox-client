@@ -9,8 +9,8 @@ This node allows you to natively interact with the AillomVox API within your n8n
 The AillomVox node supports the following operations:
 
 ### Resource: Info
-*   **Get Voices**: Returns available voices, filterable by current providers/TTS engines such as AillomVox, Inworld, LMNT, Rime, Fish Audio, Soniox, xAI, Gemini, AWS, Qwen, OpenAI, Grok, and Ultravox.
-*   **Get Providers**: Returns the supported realtime providers and nested AillomVox TTS options.
+*   **Get Voices**: Returns available voices for a provider/TTS engine such as Inworld, LMNT, Rime, Fish Audio, Soniox, xAI, Gemini, AWS, Qwen, OpenAI, Grok, or Ultravox. Supports search and optional workspace clone scope.
+*   **Get Providers**: Returns the supported realtime providers and AillomVox TTS options. Nested voice catalogs are optional because the live response can be large.
 *   **Get Pricing**: Returns the public USD/min rate card from `/api/pricing`.
 
 ### Resource: Recording

@@ -7,6 +7,21 @@ export class AillomVoxApi implements ICredentialType {
     name = 'aillomVoxApi';
     displayName = 'AillomVox API';
     documentationUrl = 'https://vox.aillom.com/docs';
+    authenticate = {
+        type: 'generic' as const,
+        properties: {
+            headers: {
+                'x-api-key': '={{$credentials.apiKey}}',
+            },
+        },
+    };
+    test = {
+        request: {
+            baseURL: '={{$credentials.baseUrl}}',
+            url: '/health',
+            method: 'GET' as const,
+        },
+    };
     properties: INodeProperties[] = [
         {
             displayName: 'API Key',

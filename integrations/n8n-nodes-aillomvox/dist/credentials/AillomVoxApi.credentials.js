@@ -6,6 +6,21 @@ class AillomVoxApi {
         this.name = 'aillomVoxApi';
         this.displayName = 'AillomVox API';
         this.documentationUrl = 'https://vox.aillom.com/docs';
+        this.authenticate = {
+            type: 'generic',
+            properties: {
+                headers: {
+                    'x-api-key': '={{$credentials.apiKey}}',
+                },
+            },
+        };
+        this.test = {
+            request: {
+                baseURL: '={{$credentials.baseUrl}}',
+                url: '/health',
+                method: 'GET',
+            },
+        };
         this.properties = [
             {
                 displayName: 'API Key',

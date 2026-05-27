@@ -10,7 +10,7 @@ function warnIfWebSocketUrlLeaksCredentials(url: string): void {
             if (SENSITIVE_WS_QUERY_KEYS.has(name.toLowerCase())) {
                 console.warn(
                     '[AillomVox] Do not put API keys in the WebSocket URL query string. ' +
-                        'Use the JSON `config` handshake (`apikey` field) instead. ' +
+                        'Use `x-api-key` headers in Node.js or the JSON `config` `apikey` field in browsers. ' +
                         'Query credentials appear in logs, proxies, and analytics.',
                 );
                 return;

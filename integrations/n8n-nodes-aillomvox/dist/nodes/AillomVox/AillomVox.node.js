@@ -106,7 +106,7 @@ class AillomVox {
                 //         Fields: getVoices
                 // ----------------------------------
                 {
-                    displayName: 'Provider (Optional)',
+                    displayName: 'Provider',
                     name: 'provider',
                     type: 'options',
                     displayOptions: {
@@ -173,8 +173,83 @@ class AillomVox {
                             value: 'xai',
                         },
                     ],
-                    default: 'aillomvox',
-                    description: 'Filter voices by specific provider',
+                    default: 'inworld',
+                    description: 'Provider or AillomVox TTS engine to list voices from',
+                },
+                {
+                    displayName: 'Search',
+                    name: 'q',
+                    type: 'string',
+                    default: '',
+                    displayOptions: {
+                        show: {
+                            resource: [
+                                'info',
+                            ],
+                            operation: [
+                                'getVoices',
+                            ],
+                        },
+                    },
+                    description: 'Optional voice search query',
+                },
+                {
+                    displayName: 'Voice Scope',
+                    name: 'scope',
+                    type: 'options',
+                    options: [
+                        {
+                            name: 'All',
+                            value: '',
+                        },
+                        {
+                            name: 'Workspace Clones',
+                            value: 'clone',
+                        },
+                    ],
+                    default: '',
+                    displayOptions: {
+                        show: {
+                            resource: [
+                                'info',
+                            ],
+                            operation: [
+                                'getVoices',
+                            ],
+                        },
+                    },
+                    description: 'Limit results to all voices or workspace-owned cloned voices',
+                },
+                {
+                    displayName: 'Include Voices',
+                    name: 'includeVoices',
+                    type: 'boolean',
+                    default: false,
+                    displayOptions: {
+                        show: {
+                            resource: [
+                                'info',
+                            ],
+                            operation: [
+                                'getProviders',
+                            ],
+                        },
+                    },
+                    description: 'Whether to include nested voice catalogs in the providers response. Can be large.',
+                },
+                {
+                    displayName: 'Workspace ID',
+                    name: 'workspaceId',
+                    type: 'string',
+                    default: '',
+                    displayOptions: {
+                        show: {
+                            resource: [
+                                'info',
+                            ],
+                        },
+                    },
+                    description: 'Optional workspace scope. The API key must belong to this workspace.',
                 },
                 // ----------------------------------
                 //         Fields: getDownloadUrl
@@ -205,27 +280,50 @@ class AillomVox {
         const returnData = [];
         const resource = this.getNodeParameter('resource', 0);
         const operation = this.getNodeParameter('operation', 0);
+        const credentials = await this.getCredentials('aillomVoxApi');
+        const baseUrl = String(credentials.baseUrl || 'https://vox.aillom.com').replace(/\/+$/, '');
         for (let i = 0; i < items.length; i++) {
             try {
                 if (resource === 'info') {
                     if (operation === 'getVoices') {
                         const provider = this.getNodeParameter('provider', i);
+                        const workspaceId = this.getNodeParameter('workspaceId', i, '');
+                        const q = this.getNodeParameter('q', i, '');
+                        const scope = this.getNodeParameter('scope', i, '');
                         const qs = {};
                         if (provider) {
                             qs.provider = provider;
                         }
+                        if (workspaceId) {
+                            qs.workspace_id = workspaceId;
+                        }
+                        if (q) {
+                            qs.q = q;
+                        }
+                        if (scope) {
+                            qs.scope = scope;
+                        }
                         const response = await this.helpers.requestWithAuthentication.call(this, 'aillomVoxApi', {
                             method: 'GET',
-                            uri: '/api/voices',
+                            uri: `${baseUrl}/api/voices`,
                             qs,
                             json: true,
                         });
                         returnData.push(response);
                     }
                     else if (operation === 'getProviders') {
+                        const includeVoices = this.getNodeParameter('includeVoices', i, false);
+                        const workspaceId = this.getNodeParameter('workspaceId', i, '');
+                        const qs = {
+                            include_voices: includeVoices,
+                        };
+                        if (workspaceId) {
+                            qs.workspace_id = workspaceId;
+                        }
                         const response = await this.helpers.requestWithAuthentication.call(this, 'aillomVoxApi', {
                             method: 'GET',
-                            uri: '/api/providers',
+                            uri: `${baseUrl}/api/providers`,
+                            qs,
                             json: true,
                         });
                         returnData.push(response);
@@ -233,7 +331,7 @@ class AillomVox {
                     else if (operation === 'getPricing') {
                         const response = await this.helpers.requestWithAuthentication.call(this, 'aillomVoxApi', {
                             method: 'GET',
-                            uri: '/api/pricing',
+                            uri: `${baseUrl}/api/pricing`,
                             json: true,
                         });
                         returnData.push(response);
@@ -244,7 +342,7 @@ class AillomVox {
                         const recordingId = this.getNodeParameter('recordingId', i);
                         const response = await this.helpers.requestWithAuthentication.call(this, 'aillomVoxApi', {
                             method: 'GET',
-                            uri: `/api/recording/${recordingId}`,
+                            uri: `${baseUrl}/api/recording/${recordingId}`,
                             json: true,
                         });
                         returnData.push(response);

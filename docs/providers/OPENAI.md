@@ -1,6 +1,6 @@
 # OpenAI Realtime Provider
 
-Direct integration with the `gpt-realtime-mini` model via WebSocket.
+Direct integration with the gateway's OpenAI Realtime default, currently `gpt-4o-mini-realtime-preview` in `GET /api/providers`.
 
 ## Configuration
 

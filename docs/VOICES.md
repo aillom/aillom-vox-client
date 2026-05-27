@@ -16,23 +16,23 @@ curl https://vox.aillom.com/api/providers
 
 ## Current public counts
 
-Last verified against production:
+Last verified against production on 2026-05-27:
 
 | Scope | Count |
 | :--- | ---: |
-| Total public voices across provider catalog | 789 |
+| Total public voices across provider catalog | 3715 |
 | `aillomvox.tts_options.inworld` | 148 |
-| `aillomvox.tts_options.xai` | 5 |
-| `aillomvox.tts_options.lmnt` | 62 |
-| `aillomvox.tts_options.soniox` | 12 |
+| `aillomvox.tts_options.xai` | 71 |
+| `aillomvox.tts_options.lmnt` | 8 |
+| `aillomvox.tts_options.soniox` | 28 |
 | `aillomvox.tts_options.rime` | 117 |
-| `aillomvox.tts_options.fish` | 101 |
+| `aillomvox.tts_options.fish` | 2988 |
 | `gemini` | 30 |
-| `aws` | 4 |
+| `aws` | 16 |
 | `qwen` | 55 |
 | `openai` | 11 |
 | `grok` | 5 |
-| `ultravox` | 239 |
+| `ultravox` | 238 |
 
 Counts can change as providers add or remove voices.
 
@@ -68,6 +68,7 @@ Recommended clone request:
 ```typescript
 await AillomVox.cloneVoice(audioBlob, apiKey, {
   name: 'Brand support voice',
+  workspaceId: 'workspace-id',
   providers: ['lmnt', 'inworld', 'fish'],
   language: 'pt-BR',
   transcription: 'Texto exato falado no audio.',

@@ -8,7 +8,7 @@ exports.VOX_PROVIDER_RATECARD = [
         ttsEngineHint: 'inworld · xai · lmnt · soniox · rime · fish',
         usdPerMinute: 0.04,
         tier: 'Gateway',
-        modelSummary: 'GPT-OSS 120B · Whisper · Inworld TTS-2',
+        modelSummary: 'Soniox STT · Groq Llama 3.3 70B · selectable TTS',
         badge: 'Best Value',
     },
     { label: 'AWS Nova', provider: 'aws', usdPerMinute: 0.06, tier: 'S2S', modelSummary: 'nova-2-sonic' },

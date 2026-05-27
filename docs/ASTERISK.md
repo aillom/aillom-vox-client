@@ -58,6 +58,8 @@ echo "load = res_audiosocket.so" >> /etc/asterisk/modules.conf
 
 AillomVox uses **API Key** authentication for security and usage tracking.
 
+For regular WebSocket clients, prefer `x-api-key` headers. Asterisk AudioSocket dialplans usually cannot set custom WebSocket headers, so the gateway still accepts `?apiKey=...` for this integration path. Keep this URL out of logs and use it only from trusted telephony infrastructure.
+
 ### Getting Your API Key
 
 Get your API key from the AillomVox dashboard or contact support.
@@ -369,7 +371,7 @@ exten => 6000,1,Set(CHANNEL(audioreadformat)=slin)
 | `first_message` | string | Initial greeting | `null` |
 | `farewell_message` | string | Goodbye message | `null` |
 | `sample_rate` | number | `8000` (tel), `16000` (hd) | **Required** |
-| `max_duration` | number | Max seconds (120-3600) | `300` |
+| `max_duration` | number | Max seconds (30-7200) | `300` |
 | `tools` | array | Client tools (Middleware only) | `[]` |
 
 ---

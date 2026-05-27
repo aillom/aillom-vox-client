@@ -1,6 +1,6 @@
 {
     "name": "n8n-nodes-aillomvox",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Official AillomVox node for n8n. Easy integration with Voice Gateway, Recordings Management, and AI Providers.",
     "keywords": [
         "n8n-community-node-package",
