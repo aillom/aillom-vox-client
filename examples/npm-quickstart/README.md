@@ -1,6 +1,14 @@
 # AillomVox npm quickstart
 
-This example installs the published `aillom-vox-client` package from npm and runs a browser voice test UI with Vite.
+This is a ready-made demo app from the SDK repository.
+
+You do **not** need to clone this repository to use the SDK in your own app. For normal SDK usage, run this inside your project:
+
+```bash
+npm install aillom-vox-client
+```
+
+Clone this repository only when you want to run this example UI locally.
 
 ## What this example tests
 

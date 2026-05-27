@@ -52,9 +52,45 @@ Hosted docs: `https://vox.aillom.com/docs`
 
 ## Quick start
 
-### Test the published npm package
+### Use the SDK in your app
 
-Full browser test with UI.
+You do **not** need to clone this repository to use the SDK. In your own project:
+
+```bash
+npm install aillom-vox-client
+```
+
+Then import it:
+
+```typescript
+import { AillomVox } from 'aillom-vox-client';
+
+const client = new AillomVox({
+  apiKey: 'av_YOUR_API_KEY',
+  provider: 'aillomvox',
+  ttsEngine: 'inworld',
+  voice: 'Aanya',
+  language: 'pt-BR',
+  sampleRate: 16000,
+  systemPrompt: 'Voce e um assistente objetivo e educado.',
+});
+
+await client.connect();
+```
+
+If you want a new browser app from zero:
+
+```bash
+npm create vite@latest my-vox-app -- --template vanilla-ts
+cd my-vox-app
+npm install
+npm install aillom-vox-client
+npm run dev
+```
+
+### Run the ready-made example UI
+
+Clone the repository only when you want to run the example app that already has UI, microphone capture, playback, transcripts and logs.
 
 Windows PowerShell:
 
@@ -95,7 +131,7 @@ npm run dev
 
 Open the Vite URL, paste your `av_...` key, click **Carregar vozes**, then **Iniciar chamada**. Full setup and troubleshooting steps are in [docs/NPM_QUICKSTART.md](docs/NPM_QUICKSTART.md).
 
-Terminal smoke test:
+### Terminal smoke test
 
 ```bash
 mkdir vox-smoke && cd vox-smoke
@@ -110,7 +146,7 @@ Expected output:
 { providers: 7, pricing: 7 }
 ```
 
-### Use the SDK
+### Realtime voice snippet
 
 ```typescript
 import { AillomVox } from 'aillom-vox-client';

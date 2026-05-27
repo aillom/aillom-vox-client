@@ -18,9 +18,19 @@ npx --yes serve examples -p 3333
 
 Then open e.g. `http://localhost:3333/01-basic/` in your browser.
 
+### Use the SDK in your app
+
+You do not need this repository for normal SDK usage:
+
+```bash
+npm install aillom-vox-client
+```
+
+Use the repository examples only when you want a ready-made demo to inspect or run locally.
+
 ### Run the npm quickstart UI
 
-This is the easiest end-to-end test for people installing from npm:
+This is the easiest end-to-end demo from this repository:
 
 Windows PowerShell:
 

@@ -1,131 +1,145 @@
-# Test the npm package
+# Use and test the npm package
 
-This guide is for someone starting from a clean machine. It installs the published `aillom-vox-client` package and runs the browser test UI.
+There are two different workflows:
 
-## What you need
+- **Use the SDK in your app:** install `aillom-vox-client`. Do not clone this repository.
+- **Run the ready-made examples:** clone this repository because the example files live here.
 
-- An AillomVox API key from https://vox.aillom.com (`av_...`).
-- Node.js 18 or newer.
-- npm, which is installed with Node.js.
-- Git.
-- A browser with microphone permission. Chrome, Edge and Firefox work on `localhost`.
+## Use the SDK in your app
 
-## Windows 10/11
+In an existing Node, Vite, React, Vue, Next.js or backend project:
 
-Open **PowerShell** as your normal user.
+```bash
+npm install aillom-vox-client
+```
 
-1. Install Node.js LTS and Git:
+Then import the SDK:
+
+```typescript
+import { AillomVox } from 'aillom-vox-client';
+
+const client = new AillomVox({
+  apiKey: 'av_YOUR_API_KEY',
+  provider: 'aillomvox',
+  ttsEngine: 'inworld',
+  voice: 'Aanya',
+  language: 'pt-BR',
+  sampleRate: 16000,
+  systemPrompt: 'Voce e um assistente objetivo e educado.',
+});
+
+await client.connect();
+```
+
+## Create a new browser app from zero
+
+This does not clone the SDK repo. It creates your own app and installs the npm package.
+
+### Windows PowerShell
+
+```powershell
+winget install --id OpenJS.NodeJS.LTS -e
+npm create vite@latest my-vox-app -- --template vanilla-ts
+cd my-vox-app
+npm install
+npm install aillom-vox-client
+npm run dev
+```
+
+### Ubuntu / Debian
+
+```bash
+sudo apt update
+sudo apt install -y curl ca-certificates
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+nvm install --lts
+nvm use --lts
+npm create vite@latest my-vox-app -- --template vanilla-ts
+cd my-vox-app
+npm install
+npm install aillom-vox-client
+npm run dev
+```
+
+### macOS
+
+```bash
+brew install node
+npm create vite@latest my-vox-app -- --template vanilla-ts
+cd my-vox-app
+npm install
+npm install aillom-vox-client
+npm run dev
+```
+
+## Run the ready-made example UI
+
+Clone the repository only if you want to run the example UI from this repo.
+
+The example includes:
+
+- API key input
+- provider and voice selectors
+- voice catalog loading
+- microphone streaming
+- audio playback
+- transcripts
+- typed text input
+- hangup button
+- event logs
+
+### Windows 10/11
+
+Open **PowerShell**.
 
 ```powershell
 winget install --id OpenJS.NodeJS.LTS -e
 winget install --id Git.Git -e
-```
-
-2. Close PowerShell and open it again.
-
-3. Check the tools:
-
-```powershell
-node -v
-npm -v
-git --version
-```
-
-4. Download and run the example:
-
-```powershell
 git clone https://github.com/aillom/aillom-vox-client.git
 cd aillom-vox-client\examples\npm-quickstart
 npm install
 npm run dev
 ```
 
-5. Open the local URL printed by Vite, usually:
-
-```text
-http://localhost:3334/
-```
-
-## Ubuntu / Debian
+### Ubuntu / Debian
 
 Open **Terminal**.
-
-1. Install Git and basic tools:
 
 ```bash
 sudo apt update
 sudo apt install -y git curl ca-certificates
-```
-
-2. Install Node.js LTS with nvm:
-
-```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 nvm install --lts
 nvm use --lts
-```
-
-3. Check the tools:
-
-```bash
-node -v
-npm -v
-git --version
-```
-
-4. Download and run the example:
-
-```bash
 git clone https://github.com/aillom/aillom-vox-client.git
 cd aillom-vox-client/examples/npm-quickstart
 npm install
 npm run dev
 ```
 
-5. Open the local URL printed by Vite, usually:
-
-```text
-http://localhost:3334/
-```
-
-## macOS
+### macOS
 
 Open **Terminal**.
 
-1. If you use Homebrew:
-
 ```bash
 brew install node git
-```
-
-If you do not use Homebrew, install Node.js LTS from https://nodejs.org and Git from https://git-scm.com.
-
-2. Check the tools:
-
-```bash
-node -v
-npm -v
-git --version
-```
-
-3. Download and run the example:
-
-```bash
 git clone https://github.com/aillom/aillom-vox-client.git
 cd aillom-vox-client/examples/npm-quickstart
 npm install
 npm run dev
 ```
 
-4. Open the local URL printed by Vite, usually:
+Open the local URL printed by Vite, usually:
 
 ```text
 http://localhost:3334/
 ```
 
-## How to use the page
+## How to use the example page
 
 1. Paste your `av_...` API key.
 2. Keep `AillomVox` as the provider for the first test.
@@ -154,8 +168,6 @@ Expected result:
 ```text
 { providers: 7, pricing: 7 }
 ```
-
-The terminal test validates the npm package and REST helpers. The browser quickstart validates microphone capture, realtime WebSocket auth, PCM audio, transcripts, playback, text messages and hangup.
 
 ## Common fixes
 
