@@ -9,7 +9,7 @@ export interface ClientTool {
     description: string;
     /** JSON Schema parameters for the function (OpenAI-style). */
     parameters?: Record<string, unknown>;
-    /** Backward-compatible location used by some dashboard / n8n tool presets. */
+    /** Backward-compatible location used by some dashboard tool presets. */
     config?: Record<string, unknown>;
     /** Optional server-side endpoint metadata, including `aillom-connect://...` tools. */
     url?: string;

@@ -168,12 +168,6 @@ See **[examples/README.md](examples/README.md)** for how to run the browser demo
 
 ---
 
-## n8n
-
-Community node under [integrations/n8n-nodes-aillomvox/](integrations/n8n-nodes-aillomvox/) (REST operations).
-
----
-
 ## License
 
 ISC © Aillom Technologies
