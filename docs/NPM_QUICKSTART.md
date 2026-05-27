@@ -23,9 +23,9 @@ const client = new AillomVox({
   provider: 'aillomvox',
   ttsEngine: 'inworld',
   voice: 'Aanya',
-  language: 'pt-BR',
+  language: 'en-US',
   sampleRate: 16000,
-  systemPrompt: 'Voce e um assistente objetivo e educado.',
+  systemPrompt: 'You are a concise and helpful assistant.',
 });
 
 await client.connect();
@@ -142,14 +142,15 @@ http://localhost:3334/
 ## How to use the example page
 
 1. Paste your `av_...` API key.
-2. Keep `AillomVox` as the provider for the first test.
-3. Click **Carregar vozes**.
-4. Select a voice.
-5. Click **Iniciar chamada**.
-6. Allow microphone access in the browser.
-7. Speak to the assistant.
-8. Use the text box to send a typed message into the same session.
-9. Click **Encerrar** to stop the call.
+2. Wait for the dynamic provider, TTS engine, and voice lists to load.
+3. Keep `AillomVox` as the provider for the first test.
+4. Click **Refresh catalog** if you need to reload the live lists.
+5. Select a voice.
+6. Click **Start call**.
+7. Allow microphone access in the browser.
+8. Speak to the assistant.
+9. Use the text box to send a typed message into the same session.
+10. Click **End call** to stop the call.
 
 ## Terminal-only smoke test
 

@@ -9,7 +9,7 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
-    "aillom-vox-client": "^2.1.4"
+    "aillom-vox-client": "^2.1.5"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

@@ -78,8 +78,8 @@ await AillomVox.cloneVoice(audioBlob, apiKey, {
   name: 'Support voice',
   workspaceId: 'workspace-id',
   providers: ['lmnt', 'inworld', 'fish'],
-  language: 'pt-BR',
-  transcription: 'Texto exato falado no audio.',
+  language: 'en-US',
+  transcription: 'Exact spoken audio text.',
 });
 ```
 

@@ -1,12 +1,14 @@
 import { AillomVox } from 'aillom-vox-client';
 import './styles.css';
 
+type ProviderItem = {
+  id: string;
+  name?: string;
+  tts_options?: Array<{ id: string; name?: string }>;
+};
+
 type ProviderResponse = {
-  providers?: Array<{
-    id: string;
-    name?: string;
-    tts_options?: Array<{ id: string; name?: string }>;
-  }>;
+  providers?: ProviderItem[];
 };
 
 type VoicesResponse = {
@@ -55,18 +57,27 @@ let audioContext: AudioContext | null = null;
 let mediaStream: MediaStream | null = null;
 let processor: ScriptProcessorNode | null = null;
 let scheduledSources: AudioBufferSourceNode[] = [];
+let providersCatalog: ProviderItem[] = [];
 let nextPlayTime = 0;
 let chunks = 0;
 
 apiKeyInput.value = sessionStorage.getItem('aillomvox_api_key') || '';
 
 providerSelect.addEventListener('change', () => {
-  ttsField.hidden = providerSelect.value !== 'aillomvox';
-  setDefaultVoice();
+  updateTtsEnginesForProvider();
+  loadVoices().catch((error) => setError(error));
+});
+
+ttsEngineSelect.addEventListener('change', () => {
+  loadVoices().catch((error) => setError(error));
+});
+
+languageSelect.addEventListener('change', () => {
+  loadVoices().catch((error) => setError(error));
 });
 
 catalogButton.addEventListener('click', () => {
-  loadVoices().catch((error) => setError(error));
+  loadProvidersAndVoices().catch((error) => setError(error));
 });
 
 form.addEventListener('submit', (event) => {
@@ -88,47 +99,127 @@ textInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') sendTextButton.click();
 });
 
+async function loadProvidersAndVoices() {
+  setStatus('catalog', 'Loading catalog');
+  catalogButton.disabled = true;
+
+  try {
+    const catalog = (await AillomVox.fetchProviders({ includeVoices: false })) as ProviderResponse;
+    providersCatalog = catalog.providers || [];
+    populateProviderSelect(providersCatalog);
+    updateTtsEnginesForProvider();
+    appendLog(`${providersCatalog.length} providers loaded from live catalog`);
+    await loadVoices();
+  } finally {
+    catalogButton.disabled = Boolean(client?.connected);
+  }
+}
+
+function populateProviderSelect(providers: ProviderItem[]) {
+  providerSelect.innerHTML = '';
+
+  if (providers.length === 0) {
+    addOption(providerSelect, 'aillomvox', 'AillomVox');
+    return;
+  }
+
+  for (const provider of providers) {
+    addOption(providerSelect, provider.id, provider.name || provider.id);
+  }
+
+  if ([...providerSelect.options].some((option) => option.value === 'aillomvox')) {
+    providerSelect.value = 'aillomvox';
+  }
+}
+
+function updateTtsEnginesForProvider() {
+  const selectedProvider = providerSelect.value;
+  const provider = providersCatalog.find((item) => item.id === selectedProvider);
+  const engines = provider?.tts_options || [];
+
+  ttsField.hidden = selectedProvider !== 'aillomvox';
+  ttsEngineSelect.innerHTML = '';
+
+  if (selectedProvider !== 'aillomvox') {
+    addOption(ttsEngineSelect, '', 'Not used');
+    return;
+  }
+
+  if (engines.length === 0) {
+    addOption(ttsEngineSelect, 'inworld', 'Inworld');
+    return;
+  }
+
+  for (const engine of engines) {
+    addOption(ttsEngineSelect, engine.id, engine.name || engine.id);
+  }
+
+  if ([...ttsEngineSelect.options].some((option) => option.value === 'inworld')) {
+    ttsEngineSelect.value = 'inworld';
+  }
+}
+
 async function loadVoices() {
-  setStatus('catalogo', 'Carregando vozes');
-  const providerKey = providerSelect.value === 'aillomvox' ? ttsEngineSelect.value : providerSelect.value;
+  setStatus('catalog', 'Loading voices');
+  voiceSelect.disabled = true;
+  voiceSelect.innerHTML = '';
+  addOption(voiceSelect, '', 'Loading voices...');
+
+  const providerKey = getVoiceProviderKey();
   const data = (await AillomVox.fetchVoices({
     provider: providerKey,
-    pageSize: 80,
+    pageSize: 120,
     preferredLanguage: languageSelect.value,
   })) as VoicesResponse;
 
   const voices = (data.voices || [])
     .map((voice) => ({
       id: voice.id || voice.voice_id || voice.voiceId || '',
-      label: voice.name || voice.displayName || voice.title || voice.label || voice.id || voice.voice_id || voice.voiceId || '',
+      label:
+        voice.name ||
+        voice.displayName ||
+        voice.title ||
+        voice.label ||
+        voice.id ||
+        voice.voice_id ||
+        voice.voiceId ||
+        '',
     }))
     .filter((voice) => voice.id);
 
   voiceSelect.innerHTML = '';
-  for (const voice of voices) {
-    const option = document.createElement('option');
-    option.value = voice.id;
-    option.textContent = voice.label && voice.label !== voice.id ? `${voice.label} (${voice.id})` : voice.id;
-    voiceSelect.appendChild(option);
+  if (voices.length === 0) {
+    addOption(voiceSelect, '', 'No voices found');
+  } else {
+    for (const voice of voices) {
+      addOption(voiceSelect, voice.id, voice.label && voice.label !== voice.id ? `${voice.label} (${voice.id})` : voice.id);
+    }
   }
 
-  if (voices.length === 0) setDefaultVoice();
-  appendLog(`${voices.length} vozes carregadas para ${providerKey}`);
-  setStatus('pronto', 'Vozes carregadas');
+  voiceSelect.disabled = Boolean(client?.connected);
+  appendLog(`${voices.length} voices loaded for ${providerKey}`);
+  setStatus('ready', 'Ready');
+}
+
+function getVoiceProviderKey() {
+  return providerSelect.value === 'aillomvox' ? ttsEngineSelect.value || 'inworld' : providerSelect.value;
 }
 
 async function startSession() {
   const apiKey = apiKeyInput.value.trim();
   if (!apiKey) {
     apiKeyInput.focus();
-    throw new Error('Informe uma API key.');
+    throw new Error('Enter an API key.');
+  }
+  if (!voiceSelect.value) {
+    throw new Error('Load voices and select one before starting.');
   }
 
   sessionStorage.setItem('aillomvox_api_key', apiKey);
   clearTranscript();
   chunks = 0;
   chunkCount.textContent = '0';
-  setStatus('conectando', 'Abrindo sessão');
+  setStatus('connecting', 'Connecting');
 
   audioContext = new AudioContext({ sampleRate: Number(sampleRateSelect.value) });
   client = new AillomVox({
@@ -140,23 +231,23 @@ async function startSession() {
     language: languageSelect.value,
     sampleRate: Number(sampleRateSelect.value) as 8000 | 16000 | 24000,
     systemPrompt: promptInput.value,
-    firstMessage: 'Ola! Pode falar comigo.',
+    firstMessage: 'Hi! You can talk to me now.',
   });
 
   wireClient(client);
   await client.connect();
   await startMicrophone();
   setConnected(true);
-  setStatus('online', 'Fale agora');
+  setStatus('online', 'Online');
 }
 
 function wireClient(vox: AillomVox) {
-  vox.on('connected', () => appendLog(`WebSocket conectado: ${vox.websocketUrl}`));
+  vox.on('connected', () => appendLog(`WebSocket connected: ${vox.websocketUrl}`));
   vox.on('disconnected', (event) => {
-    appendLog(`Sessão encerrada ${event.reason || event.code || ''}`.trim());
+    appendLog(`Session ended ${event.reason || event.code || ''}`.trim());
     stopSession('remote');
   });
-  vox.on('control', (event) => appendLog(`controle: ${event.action || 'evento'}`));
+  vox.on('control', (event) => appendLog(`control: ${event.action || 'event'}`));
   vox.on('state', (event) => {
     stateText.textContent = event.state;
     setStatus(event.state, event.state);
@@ -167,12 +258,12 @@ function wireClient(vox: AillomVox) {
   });
   vox.on('playback_clear_buffer', () => {
     clearPlaybackBuffer();
-    appendLog('playback limpo por interrupção');
+    appendLog('playback cleared by interruption');
   });
   vox.on('audio', (pcm) => {
     chunks += 1;
     chunkCount.textContent = String(chunks);
-    audioText.textContent = 'recebendo';
+    audioText.textContent = 'receiving';
     playPcmChunk(pcm);
   });
   vox.on('error', (error) => setError(error));
@@ -197,7 +288,7 @@ async function startMicrophone() {
 
   source.connect(processor);
   processor.connect(audioContext.destination);
-  audioText.textContent = 'microfone';
+  audioText.textContent = 'microphone';
 }
 
 function playPcmChunk(chunk: ArrayBuffer | ArrayBufferView) {
@@ -226,7 +317,7 @@ function playPcmChunk(chunk: ArrayBuffer | ArrayBufferView) {
   scheduledSources.push(source);
   source.onended = () => {
     scheduledSources = scheduledSources.filter((item) => item !== source);
-    if (scheduledSources.length === 0) audioText.textContent = client?.connected ? 'microfone' : 'parado';
+    if (scheduledSources.length === 0) audioText.textContent = client?.connected ? 'microphone' : 'idle';
   };
 }
 
@@ -257,10 +348,10 @@ function stopSession(reason: 'manual' | 'remote') {
     audioContext.close().catch(() => undefined);
   }
   audioContext = null;
-  audioText.textContent = 'parado';
-  stateText.textContent = 'pronto';
+  audioText.textContent = 'idle';
+  stateText.textContent = 'ready';
   setConnected(false);
-  if (reason === 'manual') setStatus('offline', 'Encerrado');
+  if (reason === 'manual') setStatus('offline', 'Ended');
 }
 
 function clearPlaybackBuffer() {
@@ -284,6 +375,7 @@ function setConnected(connected: boolean) {
   ttsEngineSelect.disabled = connected;
   voiceSelect.disabled = connected;
   sampleRateSelect.disabled = connected;
+  languageSelect.disabled = connected;
 }
 
 function setStatus(kind: string, text: string) {
@@ -294,21 +386,21 @@ function setStatus(kind: string, text: string) {
 
 function setError(error: unknown) {
   const message = error instanceof Error ? error.message : JSON.stringify(error);
-  appendLog(`erro: ${message}`);
-  setStatus('erro', 'Erro');
+  appendLog(`error: ${message}`);
+  setStatus('error', 'Error');
 }
 
 function appendTranscript(role: string, text: string) {
   transcript.querySelector('.empty')?.remove();
   const row = document.createElement('p');
   row.className = `line ${role === 'user' ? 'user' : 'assistant'}`;
-  row.innerHTML = `<span>${role === 'user' ? 'Você' : 'Vox'}</span>${escapeHtml(text)}`;
+  row.innerHTML = `<span>${role === 'user' ? 'You' : 'Vox'}</span>${escapeHtml(text)}`;
   transcript.appendChild(row);
   transcript.scrollTop = transcript.scrollHeight;
 }
 
 function clearTranscript() {
-  transcript.innerHTML = '<p class="empty">Transcrições aparecem aqui.</p>';
+  transcript.innerHTML = '<p class="empty">Transcripts appear here.</p>';
   eventLog.innerHTML = '';
 }
 
@@ -318,13 +410,11 @@ function appendLog(message: string) {
   eventLog.prepend(row);
 }
 
-function setDefaultVoice() {
-  const fallback = providerSelect.value === 'aillomvox' ? 'Aanya' : '';
-  voiceSelect.innerHTML = '';
+function addOption(select: HTMLSelectElement, value: string, label: string) {
   const option = document.createElement('option');
-  option.value = fallback;
-  option.textContent = fallback || 'Carregue o catalogo';
-  voiceSelect.appendChild(option);
+  option.value = value;
+  option.textContent = label;
+  select.appendChild(option);
 }
 
 function escapeHtml(value: string) {
@@ -340,14 +430,4 @@ function escapeHtml(value: string) {
   });
 }
 
-async function warmCatalog() {
-  try {
-    const catalog = (await AillomVox.fetchProviders({ includeVoices: false })) as ProviderResponse;
-    appendLog(`${catalog.providers?.length || 0} providers disponiveis`);
-  } catch (error) {
-    appendLog(`catalogo indisponivel: ${error instanceof Error ? error.message : 'erro'}`);
-  }
-}
-
-setDefaultVoice();
-warmCatalog();
+loadProvidersAndVoices().catch((error) => setError(error));

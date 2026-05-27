@@ -50,7 +50,7 @@ npm install
 npm run dev
 ```
 
-Open the Vite URL in your browser. Full Windows, Ubuntu/Debian and macOS setup steps are in [npm-quickstart/README.md](npm-quickstart/README.md).
+Open the Vite URL in your browser. The quickstart loads providers, TTS engines and voices dynamically from the live catalog. Full Windows, Ubuntu/Debian and macOS setup steps are in [npm-quickstart/README.md](npm-quickstart/README.md).
 
 ### Run the TypeScript sample
 

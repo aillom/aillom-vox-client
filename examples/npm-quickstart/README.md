@@ -124,14 +124,15 @@ Open the URL printed by Vite, usually `http://localhost:3334/`.
 ## How to use the UI
 
 1. Paste your `av_...` API key.
-2. Keep `Provider` as `AillomVox`.
-3. Click **Carregar vozes**.
-4. Choose a voice.
-5. Click **Iniciar chamada**.
-6. Allow microphone access.
-7. Speak to the assistant.
-8. Send typed text from the input if you want to test `sendText()`.
-9. Click **Encerrar** when finished.
+2. Wait for the dynamic provider, TTS engine, and voice lists to load.
+3. Keep `Provider` as `AillomVox`.
+4. Click **Refresh catalog** if you need to reload the live lists.
+5. Choose a voice.
+6. Click **Start call**.
+7. Allow microphone access.
+8. Speak to the assistant.
+9. Send typed text from the input if you want to test `sendText()`.
+10. Click **End call** when finished.
 
 ## Common fixes
 

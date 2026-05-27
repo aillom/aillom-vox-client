@@ -84,14 +84,14 @@ h1 {
 
 .status-pill[data-state="speaking"],
 .status-pill[data-state="thinking"],
-.status-pill[data-state="conectando"],
-.status-pill[data-state="catalogo"] {
+.status-pill[data-state="connecting"],
+.status-pill[data-state="catalog"] {
   border-color: #d6a84a;
   color: #765316;
   background: #fff6df;
 }
 
-.status-pill[data-state="erro"] {
+.status-pill[data-state="error"] {
   border-color: #e17a72;
   color: #9a2f28;
   background: #fff0ee;

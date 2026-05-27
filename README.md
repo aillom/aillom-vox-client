@@ -70,9 +70,9 @@ const client = new AillomVox({
   provider: 'aillomvox',
   ttsEngine: 'inworld',
   voice: 'Aanya',
-  language: 'pt-BR',
+  language: 'en-US',
   sampleRate: 16000,
-  systemPrompt: 'Voce e um assistente objetivo e educado.',
+  systemPrompt: 'You are a concise and helpful assistant.',
 });
 
 await client.connect();
@@ -129,7 +129,7 @@ npm install
 npm run dev
 ```
 
-Open the Vite URL, paste your `av_...` key, click **Carregar vozes**, then **Iniciar chamada**. Full setup and troubleshooting steps are in [docs/NPM_QUICKSTART.md](docs/NPM_QUICKSTART.md).
+Open the Vite URL, paste your `av_...` key, wait for the dynamic provider, TTS engine, and voice lists to load, then click **Start call**. Use **Refresh catalog** if you want to reload the live lists. Full setup and troubleshooting steps are in [docs/NPM_QUICKSTART.md](docs/NPM_QUICKSTART.md).
 
 ### Terminal smoke test
 
