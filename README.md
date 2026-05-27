@@ -28,6 +28,7 @@ npm install aillom-vox-client
 
 | Doc | Purpose |
 | :--- | :--- |
+| [docs/NPM_QUICKSTART.md](docs/NPM_QUICKSTART.md) | Copy/paste npm tests for browser and terminal |
 | [docs/PROTOCOL.md](docs/PROTOCOL.md) | WebSocket lifecycle, handshake JSON, PCM rules |
 | [docs/PROVIDERS.md](docs/PROVIDERS.md) | Provider matrix, **public USD/min rate card**, `tts_engine` for `aillomvox` |
 | [docs/VOICES.md](docs/VOICES.md) | Voice catalog notes |
@@ -50,6 +51,36 @@ Hosted docs: `https://vox.aillom.com/docs`
 ---
 
 ## Quick start
+
+### Test the published npm package
+
+Full browser test with UI:
+
+```bash
+git clone https://github.com/aillom/aillom-vox-client.git
+cd aillom-vox-client/examples/npm-quickstart
+npm install
+npm run dev
+```
+
+Open the Vite URL, paste your `av_...` key, click **Carregar vozes**, then **Iniciar chamada**.
+
+Terminal smoke test:
+
+```bash
+mkdir vox-smoke && cd vox-smoke
+npm init -y
+npm install aillom-vox-client
+node -e "const { AillomVox } = require('aillom-vox-client'); Promise.all([AillomVox.fetchProviders({ includeVoices: false }), AillomVox.fetchPricing()]).then(([providers, pricing]) => console.log({ providers: providers.count, pricing: pricing.count }))"
+```
+
+Expected output:
+
+```text
+{ providers: 7, pricing: 7 }
+```
+
+### Use the SDK
 
 ```typescript
 import { AillomVox } from 'aillom-vox-client';
@@ -154,6 +185,7 @@ See **[examples/README.md](examples/README.md)** for how to run the browser demo
 
 | Path | Description |
 | :--- | :--- |
+| [examples/npm-quickstart/](examples/npm-quickstart/) | Published npm package test app with voice catalog, mic, playback, transcripts and text input |
 | [examples/sdk-usage.ts](examples/sdk-usage.ts) | TypeScript sample with catalog fetch + handlers |
 | [examples/01-basic/](examples/01-basic/) | Minimal browser demo |
 | [examples/02-advanced-dashboard/](examples/02-advanced-dashboard/) | Larger UI example |

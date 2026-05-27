@@ -112,7 +112,7 @@ class AillomVox {
     sendAudio(chunk) {
         if (!this.ws || this.ws.readyState !== isomorphic_ws_1.default.OPEN)
             return;
-        if (chunk instanceof Int16Array) {
+        if (ArrayBuffer.isView(chunk)) {
             this.ws.send(chunk.buffer.slice(chunk.byteOffset, chunk.byteOffset + chunk.byteLength));
             return;
         }

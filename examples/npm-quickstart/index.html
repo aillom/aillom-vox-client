@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AillomVox npm quickstart</title>
+  </head>
+  <body>
+    <main id="app">
+      <section class="shell">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">aillom-vox-client</p>
+            <h1>Teste o Vox pelo npm</h1>
+          </div>
+          <div class="status-pill" id="statusPill">offline</div>
+        </header>
+
+        <section class="workspace">
+          <form class="panel controls" id="sessionForm">
+            <label class="field field-wide">
+              <span>API key</span>
+              <input id="apiKey" type="password" placeholder="av_..." autocomplete="off" />
+            </label>
+
+            <label class="field">
+              <span>Provider</span>
+              <select id="provider">
+                <option value="aillomvox">AillomVox</option>
+                <option value="openai">OpenAI</option>
+                <option value="gemini">Gemini</option>
+                <option value="aws">AWS Nova</option>
+                <option value="qwen">Qwen</option>
+                <option value="grok">Grok</option>
+                <option value="ultravox">Ultravox</option>
+              </select>
+            </label>
+
+            <label class="field" id="ttsField">
+              <span>TTS engine</span>
+              <select id="ttsEngine">
+                <option value="inworld">Inworld</option>
+                <option value="xai">xAI</option>
+                <option value="lmnt">LMNT</option>
+                <option value="soniox">Soniox</option>
+                <option value="rime">Rime</option>
+                <option value="fish">Fish Audio</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Voz</span>
+              <select id="voice">
+                <option value="Aanya">Aanya</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Idioma</span>
+              <select id="language">
+                <option value="pt-BR">pt-BR</option>
+                <option value="en-US">en-US</option>
+                <option value="es-ES">es-ES</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Sample rate</span>
+              <select id="sampleRate">
+                <option value="16000">16000 Hz</option>
+                <option value="24000">24000 Hz</option>
+                <option value="8000">8000 Hz</option>
+              </select>
+            </label>
+
+            <label class="field field-wide">
+              <span>Prompt</span>
+              <textarea id="systemPrompt" rows="3">Voce e um assistente de voz objetivo, natural e educado. Responda em portugues do Brasil.</textarea>
+            </label>
+
+            <div class="button-row">
+              <button type="button" class="button secondary" id="catalogButton">Carregar vozes</button>
+              <button type="submit" class="button primary" id="startButton">Iniciar chamada</button>
+              <button type="button" class="button danger" id="stopButton" disabled>Encerrar</button>
+            </div>
+          </form>
+
+          <section class="panel live">
+            <div class="meter-strip">
+              <div>
+                <span class="metric-label">Estado</span>
+                <strong id="stateText">pronto</strong>
+              </div>
+              <div>
+                <span class="metric-label">Áudio</span>
+                <strong id="audioText">parado</strong>
+              </div>
+              <div>
+                <span class="metric-label">Pacotes</span>
+                <strong id="chunkCount">0</strong>
+              </div>
+            </div>
+
+            <div class="composer">
+              <input id="textInput" type="text" placeholder="Enviar texto para a sessão" />
+              <button type="button" class="button secondary" id="sendTextButton" disabled>Enviar</button>
+            </div>
+
+            <div class="transcript" id="transcript">
+              <p class="empty">Transcrições aparecem aqui.</p>
+            </div>
+
+            <div class="log" id="eventLog" aria-live="polite"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

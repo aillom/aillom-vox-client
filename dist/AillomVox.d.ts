@@ -2,7 +2,7 @@ import { AillomVoxConfig, CloneVoiceOptions, CloneVoiceResult, DeleteVoiceOption
 import WebSocket from 'isomorphic-ws';
 export type ClientEvent = 'audio' | 'transcript' | 'tool_call' | 'error' | 'connected' | 'disconnected' | 'interruption' | 'playback_clear_buffer' | 'state' | 'control' | 'raw';
 export interface VoxClientEventMap {
-    audio: ArrayBuffer | Buffer;
+    audio: ArrayBuffer | ArrayBufferView;
     transcript: TranscriptEvent;
     tool_call: ToolCallEvent;
     error: ErrorEvent | WebSocket.ErrorEvent | unknown;
@@ -44,7 +44,7 @@ export declare class AillomVox {
     /**
      * Send microphone capture to the model. PCM16 LE mono at the configured `sampleRate`.
      */
-    sendAudio(chunk: ArrayBuffer | Int16Array | Buffer): void;
+    sendAudio(chunk: ArrayBuffer | ArrayBufferView): void;
     /**
      * Reply to a `tool_call` event within 15 seconds or the model may stall.
      */

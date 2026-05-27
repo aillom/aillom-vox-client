@@ -18,6 +18,18 @@ npx --yes serve examples -p 3333
 
 Then open e.g. `http://localhost:3333/01-basic/` in your browser.
 
+### Run the npm quickstart UI
+
+This is the easiest end-to-end test for people installing from npm:
+
+```bash
+cd examples/npm-quickstart
+npm install
+npm run dev
+```
+
+Open the Vite URL in your browser.
+
 ### Run the TypeScript sample
 
 From the repository root (after `npm install` and `npm run build` in the package root):
@@ -32,6 +44,7 @@ By default it imports the SDK from `../src` for development. In your app, use `i
 
 | Path | Description |
 | :--- | :--- |
+| [**npm-quickstart/**](npm-quickstart/) | Vite + TypeScript app that imports `aillom-vox-client` from npm. Includes catalog loading, provider/voice controls, microphone streaming, playback, transcripts, text input and hangup. |
 | [**sdk-usage.ts**](sdk-usage.ts) | Node-compatible TS: `fetchProviders()`, connect, transcripts, audio chunks, `playback_clear_buffer`, tool results. Set `AILLOMVOX_KEY` or edit the placeholder key. |
 | [**01-basic/**](01-basic/) | Minimal connect / mic / PCM playback with **sequential scheduling** and **`playback_clear_buffer`** (barge-in). Good starting point to copy. |
 | [**02-advanced-dashboard/**](02-advanced-dashboard/) | Multi-provider UI, tools JSON, state / hangup handling, same gateway URL rules. |

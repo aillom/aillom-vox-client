@@ -30,7 +30,7 @@ export type ClientEvent =
     | 'raw';
 
 export interface VoxClientEventMap {
-    audio: ArrayBuffer | Buffer;
+    audio: ArrayBuffer | ArrayBufferView;
     transcript: TranscriptEvent;
     tool_call: ToolCallEvent;
     error: ErrorEvent | WebSocket.ErrorEvent | unknown;
@@ -166,9 +166,9 @@ export class AillomVox {
     /**
      * Send microphone capture to the model. PCM16 LE mono at the configured `sampleRate`.
      */
-    public sendAudio(chunk: ArrayBuffer | Int16Array | Buffer): void {
+    public sendAudio(chunk: ArrayBuffer | ArrayBufferView): void {
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
-        if (chunk instanceof Int16Array) {
+        if (ArrayBuffer.isView(chunk)) {
             this.ws.send(
                 chunk.buffer.slice(
                     chunk.byteOffset,
